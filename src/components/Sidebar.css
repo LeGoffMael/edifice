@@ -1,0 +1,31 @@
+.sidebar {
+    flex-grow: 0;
+    flex-shrink: 0;
+    min-width: 0px;
+    max-width: 80%;
+    display: flex;
+    flex-direction: row;
+    background: #252526;
+    box-shadow: -8px 2px 22px -7px rgba(0, 0, 0, 0.25);
+    z-index: 2;
+}
+
+.sidebar .sidebar-content {
+    flex: 1;
+}
+
+.sidebar .sidebar-resizer {
+    flex-grow: 0;
+    flex-shrink: 0;
+    flex-basis: 6px;
+    justify-self: flex-end;
+    cursor: col-resize;
+    resize: horizontal;
+}
+
+.sidebar .sidebar-resizer:hover,
+.sidebar.resizing .sidebar-resizer {
+    width: 2px;
+    /* change to theme color */
+    background: #c1c3c5b4;
+}

@@ -1,0 +1,29 @@
+.tabs {
+    padding: 10px;
+}
+
+.tabs ul {
+    list-style: none;
+    display: flex;
+    justify-content: left;
+    margin-top: 0;
+    padding: 0;
+}
+
+.tab-title button {
+    border: none;
+    background: none;
+    color: #fff;
+    cursor: pointer;
+    text-transform: uppercase;
+    padding: 0;
+    margin-right: 20px;
+}
+
+.tab-title button:focus {
+    outline: none;
+}
+
+.tab-title[class~='active'] button {
+    text-decoration: underline;
+}

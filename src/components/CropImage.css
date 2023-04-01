@@ -1,0 +1,12 @@
+.crop-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: #1E1E1E;
+}
+
+/* To change crop overlay color
+.reactEasyCrop_CropArea {
+    box-shadow: 0 0 0 9999px rgba(0, 0, 0, .5) !important;
+}
+*/

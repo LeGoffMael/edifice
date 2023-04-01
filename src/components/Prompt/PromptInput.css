@@ -1,0 +1,25 @@
+.prompt-input {
+    /* Also add text styles to highlighting tokens */
+    font-size: 0.7em;
+    line-height: 1.4;
+    letter-spacing: 1px;
+
+    /* Remove default styles */
+    border: none;
+    overflow: auto;
+    outline: none;
+
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+    box-shadow: none;
+
+    /* remove the resize handle on the bottom right */
+    resize: none;
+
+    padding: 10px;
+    border: 0;
+    box-sizing: border-box;
+    overflow: auto;
+    background-color: #1E1E1E;
+    color: white;
+}
