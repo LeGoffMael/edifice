@@ -12,6 +12,7 @@
 
 .sidebar .sidebar-content {
     flex: 1;
+    overflow: hidden;
 }
 
 .sidebar .sidebar-resizer {

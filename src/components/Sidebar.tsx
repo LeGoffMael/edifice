@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import Explorer from './File/Explorer';
 import './Sidebar.css';
 
 function Sidebar() {
@@ -42,7 +43,9 @@ function Sidebar() {
             style={{ width: sidebarWidth }}
             onMouseDown={(e) => e.preventDefault()}
         >
-            <div className='sidebar-content' />
+            <div className='sidebar-content'>
+                <Explorer />
+            </div>
             <div className='sidebar-resizer' onMouseDown={startResizing} />
         </div>
     );

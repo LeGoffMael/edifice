@@ -1,0 +1,36 @@
+.explorer {
+    margin: 10px 0;
+    height: 100%;
+
+    display: flex;
+    flex-direction: column;
+}
+
+.explorer-title {
+    color: #c1c3c5b4;
+    position: sticky;
+    top: 0;
+    padding: 10px;
+    background: #252526;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.explorer-title h2 {
+    margin: 0;
+    font-size: 1em;
+}
+
+.explorer-title span {
+    font-size: 0.8em;
+}
+
+.explorer-list {
+    flex: 1;
+    overflow: auto;
+    color: #fff;
+    margin-bottom: 10px;
+}
