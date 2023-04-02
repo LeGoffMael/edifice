@@ -18,7 +18,7 @@ def find_files_with_extensions_recursive(directory, extensions):
         for filename in filenames:
             file = __getFile(root, filename)
             if __canIncludeFile(file, extensions):
-                files.append(json.dumps(file.__dict__))
+                files.append(json.loads(json.dumps(file.__dict__)))
             else:
                 continue
     return files
@@ -36,7 +36,7 @@ def find_files_with_extensions(directory, extensions):
     for filename in os.listdir(directory):
         file = __getFile(directory, filename)
         if __canIncludeFile(file, extensions):
-            files.append(json.dumps(file.__dict__))
+            files.append(json.loads(json.dumps(file.__dict__)))
         else:
             continue
     return files
