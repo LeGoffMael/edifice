@@ -43,7 +43,7 @@
 /* FileItem */
 .explorer-file-item {
     height: 1.5em;
-    width: 100%;
+    width: calc(100% - 20px);
     white-space: nowrap;
     font-size: 0.9em;
     padding: 0 10px;

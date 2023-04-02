@@ -5,7 +5,7 @@ type Props = {
     children: ReactElement | ReactElement[];
 };
 
-export default function Sidebar({ children }: Props) {
+export default function Sidebar(props: Props) {
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isResizing, setIsResizing] = useState(false);
     const [sidebarWidth, setSidebarWidth] = useState(268);
@@ -47,7 +47,7 @@ export default function Sidebar({ children }: Props) {
             onMouseDown={(e) => e.preventDefault()}
         >
             <div className='sidebar-content'>
-                {children}
+                {props.children}
             </div>
             <div className='sidebar-resizer' onMouseDown={startResizing} />
         </div>

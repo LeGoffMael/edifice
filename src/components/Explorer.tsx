@@ -12,14 +12,14 @@ type FileItemProps = {
     onClick: MouseEventHandler<HTMLDivElement>;
 };
 
-function FileItem({ file, isSelected, onClick }: FileItemProps) {
+function FileItem(props: FileItemProps) {
     return (
         <div
-            key={file.path}
-            className={`explorer-file-item ${isSelected ? 'selected' : ''}`}
-            onClick={onClick}
+            key={props.file.path}
+            className={`explorer-file-item ${props.isSelected ? 'selected' : ''}`}
+            onClick={props.onClick}
         >
-            <span>{file.name}</span>
+            <span>{props.file.name}</span>
         </div>
     );
 }
