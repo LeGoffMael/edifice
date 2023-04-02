@@ -1,11 +1,28 @@
-import { useEffect } from 'react';
-import { getAllFiles, fetchFiles, updateSelectedFile } from '../../store/files'
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { RootState } from '../../app/store';
+import { MouseEventHandler, useEffect } from 'react';
+import { getAllFiles, fetchFiles, updateSelectedFile } from '../store/files'
+import { useAppDispatch, useAppSelector } from '../app/hooks';
+import { RootState } from '../app/store';
 
-import FileItem from './FileItem';
 import './Explorer.css';
-import { File } from '../../models/File';
+import { File } from '../models/File';
+
+type FileItemProps = {
+    file: File;
+    isSelected: boolean;
+    onClick: MouseEventHandler<HTMLDivElement>;
+};
+
+function FileItem({ file, isSelected, onClick }: FileItemProps) {
+    return (
+        <div
+            key={file.path}
+            className={`explorer-file-item ${isSelected ? 'selected' : ''}`}
+            onClick={onClick}
+        >
+            <span>{file.name}</span>
+        </div>
+    );
+}
 
 export default function Explorer() {
     const dispatch = useAppDispatch()
@@ -33,7 +50,6 @@ export default function Explorer() {
             <FileItem
                 key={item.path}
                 file={item}
-                index={index}
                 isSelected={item.path === selectedFile?.path}
                 onClick={() => selectFile(item)}
             />

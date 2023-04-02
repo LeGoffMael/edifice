@@ -1,18 +1,15 @@
 import './App.css';
-import CropImage from './components/CropImage';
-import PromptEditor from './components/Prompt/PromptEditor';
 import Sidebar from './components/Sidebar';
+import FileEditor from './components/FileEditor/FileEditor';
+import Explorer from './components/Explorer';
 
-function App() {
+export default function App() {
   return (
     <div className='app'>
-      <Sidebar />
-      <div className='app-main'>
-        <CropImage />
-        <PromptEditor />
-      </div>
+      <Sidebar>
+        <Explorer />
+      </Sidebar>
+      <FileEditor />
     </div>
   );
 }
-
-export default App;

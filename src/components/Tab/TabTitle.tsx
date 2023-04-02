@@ -9,7 +9,7 @@ export type Props = {
     isActive?: boolean;
 };
 
-function TabTitle(props: Props): JSX.Element {
+export default function TabTitle(props: Props) {
     const { title, setSelectedTab, index, isActive } = props;
 
     const handleOnClick = useCallback(() => {
@@ -22,5 +22,3 @@ function TabTitle(props: Props): JSX.Element {
         </li>
     );
 };
-
-export default TabTitle;

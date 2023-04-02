@@ -8,7 +8,7 @@ type Props = {
     preSelectedTabIndex?: number;
 };
 
-function Tabs(props: Props): JSX.Element {
+export default function Tabs(props: Props) {
     const { children, preSelectedTabIndex } = props;
 
     // First tab is shown by default
@@ -33,5 +33,3 @@ function Tabs(props: Props): JSX.Element {
         </div>
     );
 };
-
-export default Tabs;

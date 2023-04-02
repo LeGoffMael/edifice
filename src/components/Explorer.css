@@ -39,3 +39,21 @@
     color: #fff;
     margin-bottom: 10px;
 }
+
+/* FileItem */
+.explorer-file-item {
+    height: 1.5em;
+    width: 100%;
+    white-space: nowrap;
+    font-size: 0.9em;
+    padding: 0 10px;
+}
+
+.explorer-file-item.selected {
+    background-color: #c1c3c5b4;
+}
+
+.explorer-file-item:hover {
+    cursor: pointer;
+    background-color: #c1c3c5b4;
+}

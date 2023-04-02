@@ -1,10 +1,8 @@
 import './PromptInput.css';
 
-function PromptInput() {
+export default function PromptInput() {
     // TODO : add highlight words
     return (
         <textarea className="prompt-input" placeholder="Enter prompt..."></textarea>
     );
 }
-
-export default PromptInput;

@@ -1,8 +1,11 @@
-import { useState, useRef, useCallback, useEffect } from 'react';
-import Explorer from './File/Explorer';
+import { useState, useRef, useCallback, useEffect, ReactElement } from 'react';
 import './Sidebar.css';
 
-function Sidebar() {
+type Props = {
+    children: ReactElement | ReactElement[];
+};
+
+export default function Sidebar({ children }: Props) {
     const sidebarRef = useRef<HTMLDivElement>(null);
     const [isResizing, setIsResizing] = useState(false);
     const [sidebarWidth, setSidebarWidth] = useState(268);
@@ -44,11 +47,9 @@ function Sidebar() {
             onMouseDown={(e) => e.preventDefault()}
         >
             <div className='sidebar-content'>
-                <Explorer />
+                {children}
             </div>
             <div className='sidebar-resizer' onMouseDown={startResizing} />
         </div>
     );
 }
-
-export default Sidebar;

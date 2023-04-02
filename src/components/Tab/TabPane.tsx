@@ -5,8 +5,6 @@ type Props = {
     children: ReactElement | ReactElement[];
 };
 
-function TabPane({ children }: Props): JSX.Element {
+export default function TabPane({ children }: Props) {
     return <div>{children}</div>;
 }
-
-export default TabPane;

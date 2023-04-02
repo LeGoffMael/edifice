@@ -1,9 +1,9 @@
 import PromptInput from './PromptInput';
-import Tabs from '../Tab/Tabs';
-import TabPane from '../Tab/TabPane';
+import Tabs from '../../Tab/Tabs';
+import TabPane from '../../Tab/TabPane';
 import './PromptEditor.css';
 
-function PromptEditor() {
+export default function PromptEditor() {
     return (
         <div className='prompt-editor'>
             <PromptInput />
@@ -20,5 +20,3 @@ function PromptEditor() {
         </div>
     );
 }
-
-export default PromptEditor;
