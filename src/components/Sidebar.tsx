@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import Explorer from './File/Explorer';
 import './Sidebar.css';
 
@@ -7,15 +7,15 @@ function Sidebar() {
     const [isResizing, setIsResizing] = useState(false);
     const [sidebarWidth, setSidebarWidth] = useState(268);
 
-    const startResizing = React.useCallback(() => {
+    const startResizing = useCallback(() => {
         setIsResizing(true);
     }, []);
 
-    const stopResizing = React.useCallback(() => {
+    const stopResizing = useCallback(() => {
         setIsResizing(false);
     }, []);
 
-    const resize = React.useCallback(
+    const resize = useCallback(
         (mouseMoveEvent: MouseEvent) => {
             if (isResizing) {
                 setSidebarWidth(
@@ -27,7 +27,7 @@ function Sidebar() {
         [isResizing]
     );
 
-    React.useEffect(() => {
+    useEffect(() => {
         window.addEventListener('mousemove', resize);
         window.addEventListener('mouseup', stopResizing);
         return () => {

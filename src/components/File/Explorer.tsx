@@ -1,39 +1,56 @@
-import React, { useState, useEffect } from 'react';
-import { File } from '../../models/file';
+import { useEffect } from 'react';
+import { getAllFiles, fetchFiles, updateSelectedFile } from '../../store/files'
+import { useAppDispatch, useAppSelector } from '../../app/hooks';
+import { RootState } from '../../app/store';
+
 import FileItem from './FileItem';
 import './Explorer.css';
+import { File } from '../../models/File';
 
-function Explorer() {
-    const [filesList, setFilesList] = useState([]);
+export default function Explorer() {
+    const dispatch = useAppDispatch()
+    const files = useAppSelector(getAllFiles)
+    const selectedFile = useAppSelector((state: RootState) => state.files.selectedFile)
+    const status = useAppSelector((state: RootState) => state.files.status)
+    const error = useAppSelector((state: RootState) => state.files.error)
 
     useEffect(() => {
-        fetch('/api/files?' + new URLSearchParams({
-            path: '/Users/mlegoff/Workspace',
-            extensions: '.png,.jpg,.jpeg,.gif',
-            recursive: 'true',
+        if (status === 'idle') {
+            dispatch(fetchFiles())
         }
-        )).then(res => res.json()).then(data => {
-            setFilesList(data);
-        });
-    }, []);
+    }, [status, dispatch])
+
+    const selectFile = (file: File) => {
+        dispatch(updateSelectedFile(file))
+    }
+
+    let content
+
+    if (status === 'loading') {
+        content = <p className='status'>Loading...</p>
+    } else if (status === 'succeeded') {
+        content = files.map(((item, index) => (
+            <FileItem
+                key={item.path}
+                file={item}
+                index={index}
+                isSelected={item.path === selectedFile?.path}
+                onClick={() => selectFile(item)}
+            />
+        )))
+    } else if (status === 'failed') {
+        content = <div className='status'>{error}</div>
+    }
 
     return (
-        <div className='explorer'>
+        <section className='explorer'>
             <div className='explorer-title'>
                 <h2>Explorer</h2>
-                <span>{filesList.length} elements</span>
+                <span>{files.length} elements</span>
             </div>
             <div className='explorer-list'>
-                {filesList.map(((item, index) => (
-                    <FileItem
-                        key={new File(JSON.parse(item)).path}
-                        file={new File(JSON.parse(item))}
-                        index={index}
-                    />
-                )))}
+                {content}
             </div>
-        </div>
-
+        </section>
     );
 }
-export default Explorer;

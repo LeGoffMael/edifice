@@ -1,4 +1,4 @@
-import React, { ReactElement, useState } from 'react';
+import { ReactElement, useState } from 'react';
 
 import './Tab.css';
 import TabTitle, { Props as TabTitleProps } from './TabTitle';

@@ -28,6 +28,11 @@
     font-size: 0.8em;
 }
 
+.explorer .status {
+    padding: 10px;
+    flex: 1;
+}
+
 .explorer-list {
     flex: 1;
     overflow: auto;

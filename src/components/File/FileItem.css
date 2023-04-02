@@ -6,6 +6,11 @@
     padding: 0 10px;
 }
 
+.explorer-file-item.selected {
+    background-color: #c1c3c5b4;
+}
+
 .explorer-file-item:hover {
+    cursor: pointer;
     background-color: #c1c3c5b4;
 }
