@@ -10,8 +10,8 @@ import '@/components/DatasetList.css';
 import { useNavigate } from 'react-router-dom';
 
 type DatasetItemProps = {
-  dataset: Dataset;
-  onClick: MouseEventHandler<HTMLDivElement>;
+    dataset: Dataset;
+    onClick: MouseEventHandler<HTMLDivElement>;
 };
 
 function DatasetItem(props: DatasetItemProps) {
@@ -24,7 +24,7 @@ function DatasetItem(props: DatasetItemProps) {
             <div>
                 <span>{props.dataset.path}</span>
                 {props.dataset.filesCount !== undefined && <span>{props.dataset.filesCount} files</span>}
-                {props.dataset.idealSize !== undefined && <span>{props.dataset.idealSize.width}x{props.dataset.idealSize.height}</span>}
+                <span>{props.dataset.idealSize !== undefined ? `${props.dataset.idealSize.width}x${props.dataset.idealSize.height}` : 'No size'}</span>
             </div>
         </div>
     );

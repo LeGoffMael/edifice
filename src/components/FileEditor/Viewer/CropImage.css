@@ -5,6 +5,16 @@
     background-color: #1E1E1E;
 }
 
+/* hide crop area if disabled */
+.crop-container.disabled .reactEasyCrop_CropArea {
+    display: none;
+}
+
+.crop-container.disabled:hover .reactEasyCrop_Container:hover {
+    cursor: default;
+}
+
+
 /* To change crop overlay color
 .reactEasyCrop_CropArea {
     box-shadow: 0 0 0 9999px rgba(0, 0, 0, .5) !important;

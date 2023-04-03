@@ -5,6 +5,7 @@ import '@/components/FileEditor/Viewer/CropImage.css';
 
 type CropImageProps = {
     imagePath: string;
+    canCrop: boolean;
 };
 
 type CropImageState = {
@@ -37,17 +38,18 @@ export default class CropImage extends React.Component<CropImageProps, CropImage
 
     render() {
         return (
-            <div className='crop-container'>
+            <div className={`crop-container ${this.props.canCrop == false && 'disabled'}`}>
                 <Cropper
                     image={'/api/load_file?path=' + this.props.imagePath}
+                    showGrid={this.props.canCrop}
                     crop={this.state.crop}
                     zoom={this.state.zoom}
                     aspect={1 / 1}
-                    onCropChange={(crop) => this.setState({ crop: crop })}
-                    onCropComplete={this.onCropComplete}
-                    onZoomChange={(zoom) => this.setState({ zoom: zoom })}
+                    onCropChange={(crop) => this.props.canCrop ? this.setState({ crop: crop }) : undefined}
+                    onCropComplete={this.props.canCrop ? this.onCropComplete : undefined}
+                    onZoomChange={this.props.canCrop ? (zoom) => this.setState({ zoom: zoom }) : undefined}
                 />
-            </div>
+            </div >
         );
     }
 }
