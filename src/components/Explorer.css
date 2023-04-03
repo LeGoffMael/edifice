@@ -1,5 +1,4 @@
 .explorer {
-    margin: 10px 0;
     height: 100%;
 
     display: flex;
@@ -37,7 +36,6 @@
     flex: 1;
     overflow: auto;
     color: #fff;
-    margin-bottom: 10px;
 }
 
 /* FileItem */

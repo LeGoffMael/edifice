@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import {  useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Sidebar from '@/components/Sidebar';
 import FileEditor from '@/components/FileEditor/FileEditor';
 import Explorer from '@/components/Explorer';
@@ -15,7 +15,7 @@ export default function App() {
 
   useEffect(() => {
     if (selectedDataset === null) {
-      navigate('/dataset-list', {state:{background:location}});
+      navigate('/dataset-list', { state: { background: location } });
     }
   }, []);
 

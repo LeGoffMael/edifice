@@ -3,9 +3,10 @@ import { RootState } from '@/app/store';
 import CropImage from '@/components/FileEditor/Viewer/CropImage';
 import PromptEditor from '@/components/FileEditor/Prompt/PromptEditor';
 import '@/components/FileEditor/FileEditor.css';
+import { getSelectedFile } from '@/store/dataset';
 
 export default function FileEditor() {
-    const selectedFile = useAppSelector((state: RootState) => state.selectedDataset.selectedFile)
+    const selectedFile = useAppSelector(getSelectedFile)
     const status = useAppSelector((state: RootState) => state.selectedDataset.status)
     const error = useAppSelector((state: RootState) => state.selectedDataset.error)
 
