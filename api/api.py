@@ -1,39 +1,32 @@
 import json
+import os
 
 from flask import Flask, request, send_file
 from helpers import find_files_with_extensions_recursive, find_files_with_extensions
 
 app = Flask(__name__)
 
-fake_datasets = [
-    {
-        'id': 0,
-        'path': './',
-        'name': 'My Dataset',
-        'extensions': '.png,.jpg,.jpeg,.gif',
-        'idealSize': { 'width': 518, 'height': 518},
-        'isRecursive': True
-    },
-    {
-        'id': 1,
-        'path': '../',
-        'name': 'My Dataset 2',
-        'extensions': '.png,.jpg,.jpeg,.gif',
-        'idealSize': { 'width': 518, 'height': 518},
-        'isRecursive': True
-    }
-]
 
 @app.route('/api/datasets', methods=['GET'])
 def get_datasets():
-    return fake_datasets
+    datasets_path = os.path.dirname(
+        os.path.realpath(__file__)) + '/../data/datasets.json'
+
+    if os.path.isfile(datasets_path):
+        with open(datasets_path) as jsonfile:
+            return json.load(jsonfile)
+
+    return []
+
 
 @app.route('/api/dataset/<int:dataset_id>', methods=['GET'])
 def get_dataset_by_id(dataset_id):
-    if(dataset_id > len(fake_datasets) - 1):
+    dataset = list(filter(lambda x: x["id"] == dataset_id, get_datasets()))
+
+    if (len(dataset) == 0):
         return "Dataset does not exists", 404
 
-    dataset = fake_datasets[dataset_id].copy()
+    dataset = dataset[0].copy()
     path = dataset['path']
     extensions = dataset['extensions']
     recursive = dataset['isRecursive']
@@ -42,7 +35,7 @@ def get_dataset_by_id(dataset_id):
         return "Path value is required", 400
 
     if recursive:
-         files = find_files_with_extensions_recursive(path, extensions)
+        files = find_files_with_extensions_recursive(path, extensions)
     else:
         files = find_files_with_extensions(path, extensions)
 
@@ -51,22 +44,8 @@ def get_dataset_by_id(dataset_id):
 
     return dataset
 
-# @app.route('/api/files', methods=['GET'])
-# def get_directory_files():
-#     path = request.args.get('path')
-#     extensions = request.args.get('extensions')
-#     recursive = request.args.get('recursive') != 'False'
 
-#     if not path:
-#         return "Path value is required", 400
-
-#     if recursive:
-#         return find_files_with_extensions_recursive(path, extensions)
-
-#     return find_files_with_extensions(path, extensions)
-
-
-@app.route('/api/load_file', methods=['GET'])
+@ app.route('/api/load_file', methods=['GET'])
 def load_file():
     path = request.args.get('path')
 
