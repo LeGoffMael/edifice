@@ -1,8 +1,8 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { File } from '../models/File'
-import { CommonStateInterface } from '../models/CommonStateInterface'
-import { RootState } from '../app/store'
+import { File } from '@/types/file'
+import { CommonStateInterface } from '@/types/commonStateInterface'
+import { RootState } from '@/app/store'
 
 interface AllFilesStateInterface extends CommonStateInterface {
     files: Array<File>,

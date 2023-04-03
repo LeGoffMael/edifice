@@ -4,6 +4,21 @@ This solution intends to simplifies the dataset generation process by automating
 
 > **_NOTE:_** This project is under development and probably doesn't deserve your interest yet.
 
+## Installation
+
+### Install react side
+```
+npm install
+```
+
+### Install Flask side
+```
+cd api
+python3 -m venv venv
+source venv/bin/activate
+pip install flask python-dotenv
+```
+
 ## Start instructions
 
 ### To start React fapp

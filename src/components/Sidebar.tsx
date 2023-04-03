@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect, ReactElement } from 'react';
-import './Sidebar.css';
+import '@/components/Sidebar.css';
 
 type Props = {
     children: ReactElement | ReactElement[];

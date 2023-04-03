@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import filesReducer from '../store/files'
+import filesReducer from '@/store/files'
 
 export const store = configureStore({
     reducer: {

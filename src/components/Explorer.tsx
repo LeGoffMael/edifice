@@ -1,10 +1,10 @@
 import { MouseEventHandler, useEffect } from 'react';
-import { getAllFiles, fetchFiles, updateSelectedFile } from '../store/files'
-import { useAppDispatch, useAppSelector } from '../app/hooks';
-import { RootState } from '../app/store';
+import { getAllFiles, fetchFiles, updateSelectedFile } from '@/store/files'
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
+import { RootState } from '@/app/store';
 
-import './Explorer.css';
-import { File } from '../models/File';
+import '@/components/Explorer.css';
+import { File } from '@/types/file';
 
 type FileItemProps = {
     file: File;
