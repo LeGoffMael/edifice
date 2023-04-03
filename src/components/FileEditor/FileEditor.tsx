@@ -18,10 +18,15 @@ export default function FileEditor() {
             return <p className='file-editor-status'>No file selected.</p>
         }
         return (
-            <div className='file-editor'>
-                <CropImage imagePath={selectedFile.path} canCrop={dataset?.idealSize !== undefined} />
-                <PromptEditor />
-            </div>
+            <section className='file-editor'>
+                <div className='file-editor-title'>
+                    <h3>{selectedFile?.path}</h3>
+                </div>
+                <div className='file-editor-content'>
+                    <CropImage imagePath={selectedFile.path} canCrop={dataset?.idealSize !== undefined} />
+                    <PromptEditor />
+                </div>
+            </section>
         )
     }
 

@@ -25,7 +25,7 @@ export default class CropImage extends React.Component<CropImageProps, CropImage
     }
 
     componentDidUpdate(prevProps: CropImageProps) {
-        if (prevProps.imagePath !== this.props.imagePath) {
+        if (this.props.canCrop && prevProps.imagePath !== this.props.imagePath) {
             // TODO: should come from back (https://github.com/d8ahazard/sd_smartprocess)
             // reset crop and zoom when image source changed
             this.setState(defaultCropState);

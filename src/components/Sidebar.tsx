@@ -42,7 +42,7 @@ export default function Sidebar(props: Props) {
     return (
         <div
             ref={sidebarRef}
-            className={`sidebar ${isResizing ? 'resizing' : ''}`}
+            className={`sidebar ${isResizing && 'resizing'}`}
             style={{ width: sidebarWidth }}
             onMouseDown={(e) => e.preventDefault()}
         >

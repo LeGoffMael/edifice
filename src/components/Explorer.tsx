@@ -17,7 +17,7 @@ function FileItem(props: FileItemProps) {
     return (
         <div
             ref={props.refProp}
-            className={`explorer-file-item ${props.isSelected ? 'selected' : ''}`}
+            className={`explorer-file-item ${props.isSelected && 'selected'}`}
             onClick={props.onClick}
         >
             <span>{props.file.name}</span>

@@ -1,16 +1,31 @@
 .file-editor,
 .file-editor-status {
-    flex: 1;
     display: flex;
-    flex-direction: row;
-    background: white;
+    flex-direction: column;
     height: 100vh;
     max-height: 100%;
+    width: 100%;
+    justify-content: center;
 
     background-color: #1E1E1E;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
     color: white;
+}
+
+.file-editor-title {
+    color: #c1c3c5b4;
+    padding: 0 10px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    overflow-y: auto;
+}
+
+.file-editor-title h3 {
+    margin: 0;
+    font-size: 0.9em;
+    font-weight: normal;
 }
 
 .file-editor-status {
@@ -19,10 +34,16 @@
     align-items: center;
 }
 
-.file-editor>* {
+.file-editor .file-editor-content {
+    flex: 1;
+    display: flex;
+    flex-direction: row;
+}
+
+.file-editor .file-editor-content>* {
     flex: 2 1 0px;
 }
 
-.file-editor div:first-child {
+.file-editor .file-editor-content div:first-child {
     flex: 3 1 0px;
 }
