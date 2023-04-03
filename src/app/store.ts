@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit'
-import filesReducer from '@/store/files'
+import allDatasetsReducer from '@/store/allDatasets'
+import dataset from '@/store/dataset'
 
 export const store = configureStore({
     reducer: {
-        files: filesReducer,
+        datasets: allDatasetsReducer,
+        selectedDataset: dataset,
     }
 })
 

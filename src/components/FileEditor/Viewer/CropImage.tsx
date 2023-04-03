@@ -1,7 +1,7 @@
 import React from 'react';
 import Cropper from 'react-easy-crop';
 import { Point, Area } from 'react-easy-crop/types';
-import './CropImage.css';
+import '@/components/FileEditor/Viewer/CropImage.css';
 
 type CropImageProps = {
     imagePath: string;

@@ -1,7 +1,7 @@
-import PromptInput from './PromptInput';
-import Tabs from '../../Tab/Tabs';
-import TabPane from '../../Tab/TabPane';
-import './PromptEditor.css';
+import PromptInput from '@/components/FileEditor/Prompt/PromptInput';
+import Tabs from '@/components/Tab/Tabs';
+import TabPane from '@/components/Tab/TabPane';
+import '@/components/FileEditor/Prompt/PromptEditor.css';
 
 export default function PromptEditor() {
     return (

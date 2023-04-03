@@ -1,4 +1,4 @@
-export class File {
+export class DatasetFile {
     id: number | undefined;
     path: string = '';
     name: string = '';

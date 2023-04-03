@@ -1,13 +1,13 @@
-import { MouseEventHandler, useEffect } from 'react';
-import { getAllFiles, fetchFiles, updateSelectedFile } from '@/store/files'
+import { MouseEventHandler } from 'react';
+import { getDatasetFiles, updateSelectedFile } from '@/store/dataset'
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
+import { DatasetFile } from '@/types/file';
 
 import '@/components/Explorer.css';
-import { File } from '@/types/file';
 
 type FileItemProps = {
-    file: File;
+    file: DatasetFile;
     isSelected: boolean;
     onClick: MouseEventHandler<HTMLDivElement>;
 };
@@ -15,7 +15,6 @@ type FileItemProps = {
 function FileItem(props: FileItemProps) {
     return (
         <div
-            key={props.file.path}
             className={`explorer-file-item ${props.isSelected ? 'selected' : ''}`}
             onClick={props.onClick}
         >
@@ -26,18 +25,12 @@ function FileItem(props: FileItemProps) {
 
 export default function Explorer() {
     const dispatch = useAppDispatch()
-    const files = useAppSelector(getAllFiles)
-    const selectedFile = useAppSelector((state: RootState) => state.files.selectedFile)
-    const status = useAppSelector((state: RootState) => state.files.status)
-    const error = useAppSelector((state: RootState) => state.files.error)
+    const files = useAppSelector(getDatasetFiles)
+    const selectedFile = useAppSelector((state: RootState) => state.selectedDataset.selectedFile)
+    const status = useAppSelector((state: RootState) => state.selectedDataset.status)
+    const error = useAppSelector((state: RootState) => state.selectedDataset.error)
 
-    useEffect(() => {
-        if (status === 'idle') {
-            dispatch(fetchFiles())
-        }
-    }, [status, dispatch])
-
-    const selectFile = (file: File) => {
+    const selectFile = (file: DatasetFile) => {
         dispatch(updateSelectedFile(file))
     }
 
@@ -46,7 +39,7 @@ export default function Explorer() {
     if (status === 'loading') {
         content = <p className='status'>Loading...</p>
     } else if (status === 'succeeded') {
-        content = files.map(((item, index) => (
+        content = files.map(((item) => (
             <FileItem
                 key={item.path}
                 file={item}

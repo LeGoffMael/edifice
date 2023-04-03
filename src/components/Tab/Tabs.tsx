@@ -1,7 +1,7 @@
 import { ReactElement, useState } from 'react';
 
-import './Tab.css';
-import TabTitle, { Props as TabTitleProps } from './TabTitle';
+import '@/components/Tab/Tab.css';
+import TabTitle, { Props as TabTitleProps } from '@/components/Tab/TabTitle';
 
 type Props = {
     children: ReactElement<TabTitleProps>[];

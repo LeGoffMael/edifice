@@ -1,13 +1,13 @@
-import { useAppSelector } from '../../app/hooks';
-import { RootState } from '../../app/store';
-import CropImage from './Viewer/CropImage';
-import PromptEditor from './Prompt/PromptEditor';
-import './FileEditor.css';
+import { useAppSelector } from '@/app/hooks';
+import { RootState } from '@/app/store';
+import CropImage from '@/components/FileEditor/Viewer/CropImage';
+import PromptEditor from '@/components/FileEditor/Prompt/PromptEditor';
+import '@/components/FileEditor/FileEditor.css';
 
 export default function FileEditor() {
-    const selectedFile = useAppSelector((state: RootState) => state.files.selectedFile)
-    const status = useAppSelector((state: RootState) => state.files.status)
-    const error = useAppSelector((state: RootState) => state.files.error)
+    const selectedFile = useAppSelector((state: RootState) => state.selectedDataset.selectedFile)
+    const status = useAppSelector((state: RootState) => state.selectedDataset.status)
+    const error = useAppSelector((state: RootState) => state.selectedDataset.error)
 
     if (status === 'loading') {
         return <div className='file-editor-status'>Loading...</div>

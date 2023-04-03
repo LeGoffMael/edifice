@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import './Tab.css';
+import '@/components/Tab/Tab.css';
 
 export type Props = {
     title: string;
