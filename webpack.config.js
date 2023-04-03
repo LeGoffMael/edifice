@@ -8,6 +8,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 module.exports = {
   mode: process.env.NODE_ENV,
   devServer: {
+    historyApiFallback: true,
     proxy: {
       '/api': 'http://127.0.0.1:5000',
     },

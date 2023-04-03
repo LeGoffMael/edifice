@@ -1,11 +1,13 @@
 import { MouseEventHandler, useEffect } from 'react';
 import { getAllDatasets, fetchDatasets } from '@/store/allDatasets'
-import { fetchDataset } from '@/store/dataset';
+import { fetchDataset, getDataset } from '@/store/dataset';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
 import { Dataset } from '@/types/dataset';
+import Modal from '@/components/Modal';
 
 import '@/components/DatasetList.css';
+import { useNavigate } from 'react-router-dom';
 
 type DatasetItemProps = {
   dataset: Dataset;
@@ -29,8 +31,10 @@ function DatasetItem(props: DatasetItemProps) {
 }
 
 export default function DatasetList() {
+    const navigate = useNavigate();
     const dispatch = useAppDispatch()
     const datasets = useAppSelector(getAllDatasets)
+    const selectedDataset = useAppSelector(getDataset)
     const status = useAppSelector((state: RootState) => state.datasets.status)
     const error = useAppSelector((state: RootState) => state.datasets.error)
 
@@ -40,9 +44,13 @@ export default function DatasetList() {
         }
     }, [status, dispatch])
 
+    const clickDataset = (dataset: Dataset) => {
+        navigate('/'); // go to home
+        dispatch(fetchDataset(dataset));
+    }
+
 
     let content
-
     if (status === 'loading') {
         content = <p className='status'>Loading...</p>
     } else if (status === 'succeeded') {
@@ -50,7 +58,7 @@ export default function DatasetList() {
             <DatasetItem
                 key={item.id}
                 dataset={item}
-                onClick={() => dispatch(fetchDataset(item))}
+                onClick={() => clickDataset(item)}
             />
         )))
     } else if (status === 'failed') {
@@ -58,7 +66,7 @@ export default function DatasetList() {
     }
 
     return (
-        <section className='datasets'>
+        <Modal canPop={selectedDataset !== null}>
             <div className='datasets-title'>
                 <h2>Datasets</h2>
                 <span>{datasets.length} elements</span>
@@ -66,6 +74,6 @@ export default function DatasetList() {
             <div className='datasets-list'>
                 {content}
             </div>
-        </section>
+        </Modal>
     );
 }

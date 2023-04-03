@@ -54,5 +54,4 @@ export const { updateSelectedFile } = datasetSlice.actions
 export default datasetSlice.reducer
 
 export const getDataset = (state: RootState) => state.selectedDataset.dataset
-export const getDatasetFiles = (state: RootState) => state.selectedDataset.dataset?.files ?? []
 export const getSelectedFile = (state: RootState) => state.selectedDataset.selectedFile

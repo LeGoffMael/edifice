@@ -1,5 +1,5 @@
 import { MouseEventHandler } from 'react';
-import { getDatasetFiles, updateSelectedFile } from '@/store/dataset'
+import { getDataset, updateSelectedFile } from '@/store/dataset'
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
 import { DatasetFile } from '@/types/file';
@@ -25,7 +25,7 @@ function FileItem(props: FileItemProps) {
 
 export default function Explorer() {
     const dispatch = useAppDispatch()
-    const files = useAppSelector(getDatasetFiles)
+    const dataset = useAppSelector(getDataset)
     const selectedFile = useAppSelector((state: RootState) => state.selectedDataset.selectedFile)
     const status = useAppSelector((state: RootState) => state.selectedDataset.status)
     const error = useAppSelector((state: RootState) => state.selectedDataset.error)
@@ -34,12 +34,16 @@ export default function Explorer() {
         dispatch(updateSelectedFile(file))
     }
 
+    let title
     let content
-
     if (status === 'loading') {
         content = <p className='status'>Loading...</p>
     } else if (status === 'succeeded') {
-        content = files.map(((item) => (
+        title = <div className='explorer-title'>
+            <h2>{dataset?.name}</h2>
+            <span>{dataset?.files.length} elements</span>
+        </div>
+        content = dataset?.files.map(((item) => (
             <FileItem
                 key={item.path}
                 file={item}
@@ -53,10 +57,7 @@ export default function Explorer() {
 
     return (
         <section className='explorer'>
-            <div className='explorer-title'>
-                <h2>Explorer</h2>
-                <span>{files.length} elements</span>
-            </div>
+            {title}
             <div className='explorer-list'>
                 {content}
             </div>
