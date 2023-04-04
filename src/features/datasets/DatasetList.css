@@ -10,6 +10,10 @@
     align-items: center;
 }
 
+.datasets-title h2 {
+    margin-bottom: 5px;
+}
+
 .datasets-list {
     display: flex;
     flex-direction: column;

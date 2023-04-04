@@ -1,0 +1,32 @@
+.dataset-form {
+    padding: 10px;
+}
+
+.dataset-form form {
+    display: flex;
+    flex-direction: column;
+}
+
+.dataset-form input {
+    margin-bottom: 10px;
+    padding: 4px;
+}
+
+.dataset-form #datasetIsRecursive {
+    display: inline-block;
+    padding-right: 10px;
+    white-space: nowrap;
+}
+
+.dataset-form #datasetIsRecursive input {
+    vertical-align: middle;
+}
+
+.dataset-form #datasetIsRecursive span {
+    vertical-align: middle;
+}
+
+.dataset-form button {
+    margin-top: 20px;
+    align-self: flex-start;
+}

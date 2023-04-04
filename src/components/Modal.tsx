@@ -4,10 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import '@/components/Modal.css';
 
 type Props = {
-  canPop: boolean;
+  canPop?: boolean;
   children: ReactElement | ReactElement[];
 };
-
 
 export default function Modal(props: Props) {
   const navigate = useNavigate();
@@ -15,7 +14,7 @@ export default function Modal(props: Props) {
   return (
     <div
       className="modal-wrapper"
-      onClick={props.canPop ? () => navigate(-1) : undefined}
+      onClick={(props.canPop ?? true) ? () => navigate(-1) : undefined}
     >
       <div
         className="modal-content"

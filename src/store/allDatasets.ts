@@ -1,4 +1,4 @@
-import type { AnyAction, AsyncThunkAction, Dispatch, PayloadAction } from '@reduxjs/toolkit'
+import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { Dataset } from '@/types/dataset'
 import { CommonStateInterface } from '@/types/interfaces'
@@ -42,3 +42,4 @@ export const fetchDatasets = createAsyncThunk('datasets/fetchDatasets', async ()
 export default allDatasetsSlice.reducer
 
 export const getAllDatasets = (state: RootState) => state.datasets.datasets
+export const getDatasetById = (state: RootState, id: string) => state.datasets.datasets.find(d => d.id === id);

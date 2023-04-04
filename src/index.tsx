@@ -1,14 +1,43 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import Router from '@/Router';
-
+import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux'
+
 import { store } from '@/app/store'
+import reportWebVitals from '@/reportWebVitals';
+
+import App from '@/App';
+import DatasetList from '@/features/datasets/DatasetList';
+import AddDatasetForm from '@/features/datasets/AddDatasetForm';
+import EditDatasetForm, { datasetLoader } from '@/features/datasets/EditDatasetForm';
 
 import '@/index.css';
-import reportWebVitals from '@/reportWebVitals';
-import { BrowserRouter } from 'react-router-dom';
 
+export const datasetsRoute = '/datasets/select';
+export const addDatasetRoute = '/datasets/add';
+export const editDatasetRoute = '/datasets/edit/';
+
+export const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        path: datasetsRoute,
+        element: <DatasetList />
+      },
+      {
+        path: addDatasetRoute,
+        element: <AddDatasetForm />
+      },
+      {
+        path: editDatasetRoute + ':datasetId',
+        element: <EditDatasetForm />,
+        loader: (params) => datasetLoader(params, store.getState())
+      },
+    ]
+  },
+])
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -16,9 +45,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <Provider store={store}>
-      <BrowserRouter>
-        <Router />
-      </BrowserRouter>
+      <RouterProvider router={router} />
     </Provider>
   </React.StrictMode>
 );

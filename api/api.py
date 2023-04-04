@@ -19,7 +19,7 @@ def get_datasets():
     return []
 
 
-@app.route('/api/dataset/<int:dataset_id>', methods=['GET'])
+@app.route('/api/dataset/<dataset_id>', methods=['GET'])
 def get_dataset_by_id(dataset_id):
     dataset = list(filter(lambda x: x["id"] == dataset_id, get_datasets()))
 

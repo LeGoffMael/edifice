@@ -7,16 +7,17 @@
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
   z-index: 999;
-
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.3); /* Black w/ opacity */
+  /* Fallback color */
+  background-color: rgb(0, 0, 0);
+  /* Black w/ opacity */
+  background-color: rgba(0, 0, 0, 0.3);
 }
 
 .modal-content {
   position: absolute;
   left: 50%;
   top: 50%;
-  transform: translate(-50%, -75%);
+  transform: translate(-50%, -50%);
 
   background-color: #1E1E1E;
   margin: auto;

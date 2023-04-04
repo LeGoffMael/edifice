@@ -1,4 +1,6 @@
-import { KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useEffect, useRef } from 'react';
+import { KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useRef } from 'react';
+import { Link } from 'react-router-dom';
+import { datasetsRoute } from '@/index';
 import { getDataset, updateSelectedFileIndex } from '@/store/dataset'
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
@@ -83,6 +85,7 @@ export default function Explorer() {
 
     return (
         <section className='explorer'>
+            <Link to={datasetsRoute}>Open dataset list</Link>
             {title}
             <div className='explorer-list' ref={ref} tabIndex={-1} onClick={setFocus} onKeyDown={handleKeyDown}>
                 {content}
