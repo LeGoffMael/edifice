@@ -1,41 +1,43 @@
 import os
-import glob
 import json
+import re
 
 from models import File
 
 
-def find_files_with_extensions_recursive(directory, extensions):
+def find_files_with_extensions_recursive(directory, includeExtRegex, excludeDirRegex):
     """
-    Recursively finds all files with the given extensions in a directory.
+    Recursively finds all files which validate the regex in a directory.
     """
-
-    if not extensions:
-        return glob.glob(directory + '/**/*', recursive=True)
 
     files = []
     for root, _, filenames in os.walk(directory):
+        # exclude directory if match regex
+        if excludeDirRegex and re.match(excludeDirRegex, root):
+            continue
+
         for filename in filenames:
             file = __getFile(root, filename)
-            if __canIncludeFile(file, extensions):
+            # include file if respect regex
+            if not includeExtRegex or re.match(includeExtRegex, filename):
                 files.append(json.loads(json.dumps(file.__dict__)))
             else:
                 continue
     return files
 
 
-def find_files_with_extensions(directory, extensions):
+def find_files_with_extensions(directory, includeExtRegex):
     """
-    Finds all files with the given extensions in a directory.
+    Finds all files which validate the regex in a directory.
     """
 
-    if not extensions:
+    if not includeExtRegex:
         return os.listdir(directory)
 
     files = []
     for filename in os.listdir(directory):
         file = __getFile(directory, filename)
-        if __canIncludeFile(file, extensions):
+        if re.match(includeExtRegex, filename):
             files.append(json.loads(json.dumps(file.__dict__)))
         else:
             continue
@@ -47,19 +49,30 @@ def __getFile(directory, filename):
     return File(os.path.join(directory, filename), filename, ext.lower())
 
 
-def __canIncludeFile(file, extensions):
-    """
-    Checks if the file can be included based on its name and extension.
-    """
+def get_datasets_json_path():
+    return os.path.dirname(
+        os.path.realpath(__file__)) + '/../data/datasets.json'
 
-    # exclude files whose names start with a dot
-    if file.name.startswith('.'):
-        return False
-    # exclude files with no extensions
-    if '.' not in file.name:
-        return False
 
-    if file.extension in extensions:
-        return True
+def get_datasets_json():
+    datasets_path = get_datasets_json_path()
 
-    return False
+    if os.path.isfile(datasets_path):
+        with open(datasets_path) as jsonfile:
+            return json.load(jsonfile)
+
+    return []
+
+
+def get_dataset_index_by_id(dataset_id):
+    for i, obj in enumerate(get_datasets_json()):
+        if obj.get('id') == dataset_id:
+            return i
+    return -1
+
+
+def save_datasets(datasets):
+    with open(get_datasets_json_path(), mode='w') as f:
+        json.dump(datasets, f,
+                  indent=4,
+                  separators=(',', ': '))

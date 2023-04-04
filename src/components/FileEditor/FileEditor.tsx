@@ -11,19 +11,26 @@ export default function FileEditor() {
     const status = useAppSelector((state: RootState) => state.selectedDataset.status)
     const error = useAppSelector((state: RootState) => state.selectedDataset.error)
 
+    function isImage(path: string) {
+        return /\.(jpg|jpeg|png|webp|avif|gif|svg)$/.test(path);
+    }
+
     if (status === 'loading') {
         return <div className='file-editor-status'>Loading...</div>
     } else if (status === 'succeeded') {
-        if (selectedFile === null) {
+        if (selectedFile === null || selectedFile === undefined) {
             return <p className='file-editor-status'>No file selected.</p>
         }
+
         return (
             <section className='file-editor'>
                 <div className='file-editor-title'>
-                    <h3>{selectedFile?.path}</h3>
+                    <h3>{selectedFile.path}</h3>
                 </div>
                 <div className='file-editor-content'>
-                    <CropImage imagePath={selectedFile.path} canCrop={dataset?.idealSize !== undefined} />
+                    {isImage(selectedFile.path)
+                        ? <CropImage imagePath={selectedFile.path} canCrop={dataset?.idealSize !== undefined} />
+                        : <span>File format not supported</span>}
                     <PromptEditor />
                 </div>
             </section>

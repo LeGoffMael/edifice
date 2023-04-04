@@ -42,12 +42,43 @@ const datasetSlice = createSlice({
         state.status = 'failed'
         state.error = action.error.message
       })
+      .addCase(editDataset.fulfilled, (state: any, action: PayloadAction<Dataset>) => {
+        const editedDataset: Dataset = action.payload
+        // if is selected dataset, replace it
+        if (state.dataset?.id === editedDataset.id) {
+          state.dataset = editedDataset;
+          // TODO: reload files after edit
+        }
+      })
+      .addCase(deleteDataset.fulfilled, (state: any, action: PayloadAction<{}>) => {
+        const deletedId = action.payload as string
+        // if is selected dataset, replace it by initial
+        if (state.dataset?.id === deletedId) {
+          state.dataset = null;
+          state.selectedFileIndex = null;
+        }
+      })
   }
 })
 
-export const fetchDataset = createAsyncThunk('datasets/fetchDatasetById', async (dataset: Dataset) => {
-  const response = await fetch(`/api/dataset/${dataset.id}`);
+export const fetchDataset = createAsyncThunk('dataset/fetchDatasetById', async (dataset: Dataset) => {
+  const response = await fetch(`/api/datasets/${dataset.id}`);
   return response.json();
+})
+
+export const editDataset = createAsyncThunk('dataset/editDataset', async (dataset: Dataset) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(dataset)
+  };
+  const response = await fetch(`/api/datasets/${dataset.id}`, requestOptions);
+  return response.json();
+})
+
+export const deleteDataset = createAsyncThunk('dataset/deleteDataset', async (id: string) => {
+  const response = await fetch(`/api/datasets/${id}`, { method: 'DELETE' });
+  return response.text();
 })
 
 export const { updateSelectedFileIndex } = datasetSlice.actions

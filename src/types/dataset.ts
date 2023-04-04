@@ -12,7 +12,7 @@ export class Dataset {
 
     // rules related to data
     isRecursive: boolean = true;
-    includeExtRegex: string = ''; // list of authorized file extensions
+    includeExtRegex: string = '^[^.].*\\.(jpeg|jpg|gif|png|webp|avif|svg)$'; // list of authorized file extensions
     excludeDirRegex: string = ''; // list of exclude directories
     idealSize: Size | undefined;
 

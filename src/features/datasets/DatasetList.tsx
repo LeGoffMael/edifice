@@ -1,8 +1,8 @@
-import { MouseEventHandler, useEffect } from 'react';
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 import { getAllDatasets, fetchDatasets } from '@/store/allDatasets'
-import { fetchDataset, getDataset } from '@/store/dataset';
+import { deleteDataset, fetchDataset, getDataset } from '@/store/dataset';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
 import { Dataset } from '@/types/dataset';
@@ -13,14 +13,25 @@ import '@/features/datasets/DatasetList.css';
 
 type DatasetItemProps = {
     dataset: Dataset;
-    onClick: MouseEventHandler<HTMLDivElement>;
 };
 
 function DatasetItem(props: DatasetItemProps) {
+    const navigate = useNavigate();
+    const dispatch = useAppDispatch()
+
+    const clickDataset = () => {
+        navigate('/'); // go to home
+        dispatch(fetchDataset(props.dataset));
+    }
+
+    const clickDeleteDataset = () => {
+        dispatch(deleteDataset(props.dataset.id));
+    }
+
     return (
         <div
             className='dataset-item'
-            onClick={props.onClick}
+            onClick={clickDataset}
         >
             <h3>{props.dataset.name}</h3>
             <div>
@@ -31,13 +42,13 @@ function DatasetItem(props: DatasetItemProps) {
                 </div>
                 {/* prevent to call `onClick` on click edit */}
                 <Link to={editDatasetRoute + props.dataset.id} onClick={(e) => e.stopPropagation()}>Edit</Link>
+                <Link to='#' onClick={(e) => { e.stopPropagation(); clickDeleteDataset(); }}>Delete</Link>
             </div>
         </div >
     );
 }
 
 export default function DatasetList() {
-    const navigate = useNavigate();
     const dispatch = useAppDispatch()
     const datasets = useAppSelector(getAllDatasets)
     const selectedDataset = useAppSelector(getDataset)
@@ -50,11 +61,6 @@ export default function DatasetList() {
         }
     }, [status, dispatch])
 
-    const clickDataset = (dataset: Dataset) => {
-        navigate('/'); // go to home
-        dispatch(fetchDataset(dataset));
-    }
-
     let content
     if (status === 'loading') {
         content = <p className='status'>Loading...</p>
@@ -63,7 +69,6 @@ export default function DatasetList() {
             <DatasetItem
                 key={item.id}
                 dataset={item}
-                onClick={() => clickDataset(item)}
             />
         )))
     } else if (status === 'failed') {
