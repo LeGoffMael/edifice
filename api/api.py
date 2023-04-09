@@ -1,8 +1,11 @@
+from flask import Flask, request, send_file
 import os
+from types import SimpleNamespace
 import uuid
 
-from flask import Flask, request, send_file
 from helpers import *
+from dataset_db import *
+from interrogator_dd import Deepdanbooru
 
 app = Flask(__name__)
 
@@ -13,7 +16,7 @@ def get_datasets():
 
 
 @app.route('/api/datasets/<dataset_id>', methods=['GET', 'POST', 'DELETE'])
-def get_dataset_by_id(dataset_id):
+def api_get_dataset_by_id(dataset_id):
     index = get_dataset_index_by_id(dataset_id)
     if (index == -1):
         return "Dataset does not exists", 404
@@ -21,25 +24,19 @@ def get_dataset_by_id(dataset_id):
     if request.method == 'GET':
         """return the dataset for <dataset_id>"""
 
-        dataset = get_datasets_json()[index].copy()
-        path = dataset.get('path')
-        recursive = dataset.get('isRecursive')
-        includeExtRegex = dataset.get('includeExtRegex')
-        excludeDirRegex = dataset.get('excludeDirRegex')
+        json_data = get_datasets_json()[index]
+        dataset = json.loads(json.dumps(json_data),
+                             object_hook=lambda d: SimpleNamespace(**d))
 
-        if not path:
+        if not dataset or not dataset.path:
             return "Path value is required", 400
 
-        if recursive:
-            files = find_files_with_extensions_recursive(
-                path, includeExtRegex, excludeDirRegex)
-        else:
-            files = find_files_with_extensions(path, includeExtRegex)
+        files = find_dataset_files(dataset)
 
-        dataset['files'] = files
-        dataset['filesCount'] = len(files)
+        json_data['files'] = files
+        json_data['filesCount'] = len(files)
 
-        return dataset
+        return json_data
 
     if request.method == 'POST':
         """edit the dataset for <dataset_id>"""
@@ -65,21 +62,23 @@ def get_dataset_by_id(dataset_id):
 @app.route('/api/datasets/add', methods=['POST'])
 def add_dataset():
     new_dataset = request.json
+    path = new_dataset.get('path')
 
-    if not new_dataset or not new_dataset.get('path'):
+    if not new_dataset or not path:
         return "Dataset value is not correct", 400
 
     # create unique id
     new_dataset['id'] = str(uuid.uuid4())
 
-    path = get_datasets_json_path()
-
     # create file & file directory if does not exists
-    if not os.path.isfile(path):
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-        with open(path, mode='w') as f:
+    if not os.path.isfile(DATASETS_PATH):
+        os.makedirs(os.path.dirname(DATASETS_PATH), exist_ok=True)
+        with open(DATASETS_PATH, mode='w') as f:
             json.dump([], f)
 
+    conf_db(path)
+    # add deepdanbooru to dataset
+    add_interrogator(path, Deepdanbooru.name, Deepdanbooru.get_tags())
     file = get_datasets_json()
     file.append(new_dataset)
     save_datasets(file)
@@ -89,9 +88,23 @@ def add_dataset():
 
 @app.route('/api/load_file', methods=['GET'])
 def load_file():
+    dataset_id = request.args.get('dataset_id')
+    dataset = get_dataset_by_id(dataset_id)
+    if not dataset_id or not dataset:
+        return "Dataset is not found", 404
+
+    dataset_path = dataset.get('path')
     path = request.args.get('path')
 
     if not path:
         return "Path value is required", 400
+
+    if not os.path.isfile(path):
+        return "File does not exists", 404
+
+    # uncomment to run deepdanbooru and save result in db
+    # add_file_with_tags(dataset_path, path,
+    #                    Deepdanbooru.name, Deepdanbooru.eval_img(path))
+    check_files(dataset_path, dhash(path))
 
     return send_file(path)

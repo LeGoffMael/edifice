@@ -18,7 +18,7 @@ export default function FileEditor() {
     if (status === 'loading') {
         return <div className='file-editor-status'>Loading...</div>
     } else if (status === 'succeeded') {
-        if (selectedFile === null || selectedFile === undefined) {
+        if (dataset == null || selectedFile === null || selectedFile === undefined) {
             return <p className='file-editor-status'>No file selected.</p>
         }
 
@@ -29,7 +29,7 @@ export default function FileEditor() {
                 </div>
                 <div className='file-editor-content'>
                     {isImage(selectedFile.path)
-                        ? <CropImage imagePath={selectedFile.path} canCrop={dataset?.idealSize !== undefined} />
+                        ? <CropImage datasetId={dataset.id} imagePath={selectedFile.path} canCrop={dataset?.idealSize !== undefined} />
                         : <span>File format not supported</span>}
                     <PromptEditor />
                 </div>

@@ -4,6 +4,7 @@ import { Point, Area } from 'react-easy-crop/types';
 import '@/components/FileEditor/Viewer/CropImage.css';
 
 type CropImageProps = {
+    datasetId: string,
     imagePath: string;
     canCrop: boolean;
 };
@@ -40,7 +41,7 @@ export default class CropImage extends React.Component<CropImageProps, CropImage
         return (
             <div className={`crop-container ${this.props.canCrop == false && 'disabled'}`}>
                 <Cropper
-                    image={'/api/load_file?path=' + this.props.imagePath}
+                    image={`/api/load_file?dataset_id=${this.props.datasetId}&path=${this.props.imagePath}`}
                     showGrid={this.props.canCrop}
                     crop={this.state.crop}
                     zoom={this.state.zoom}
