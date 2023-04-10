@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { getAllDatasets, fetchDatasets } from '@/store/allDatasets'
+import { getAllDatasets, fetchDatasets, getAllDatasetsStatus } from '@/store/allDatasets'
 import { deleteDataset, fetchDataset, getDataset } from '@/store/dataset';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { RootState } from '@/app/store';
 import { Dataset } from '@/types/dataset';
 import Modal from '@/components/Modal';
 import { addDatasetRoute, editDatasetRoute } from '@/index';
@@ -51,28 +50,27 @@ function DatasetItem(props: DatasetItemProps) {
 export default function DatasetList() {
     const dispatch = useAppDispatch()
     const datasets = useAppSelector(getAllDatasets)
+    const status = useAppSelector(getAllDatasetsStatus)
     const selectedDataset = useAppSelector(getDataset)
-    const status = useAppSelector((state: RootState) => state.datasets.status)
-    const error = useAppSelector((state: RootState) => state.datasets.error)
 
     useEffect(() => {
-        if (status === 'idle') {
+        if (status.isIdle()) {
             dispatch(fetchDatasets())
         }
     }, [status, dispatch])
 
     let content
-    if (status === 'loading') {
+    if (status.isLoading()) {
         content = <p className='status'>Loading...</p>
-    } else if (status === 'succeeded') {
+    } else if (status.isSucceeded()) {
         content = datasets.map(((item) => (
             <DatasetItem
                 key={item.id}
                 dataset={item}
             />
         )))
-    } else if (status === 'failed') {
-        content = <div className='status'>{error}</div>
+    } else if (status.isFailed()) {
+        content = <div className='status'>{status.error}</div>
     }
 
     return (

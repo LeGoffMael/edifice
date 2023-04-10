@@ -1,12 +1,13 @@
-import { KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useRef } from 'react';
+import { KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { datasetsRoute } from '@/index';
-import { getDataset, updateSelectedFileIndex } from '@/store/dataset'
+import { getDataset, getDatasetStatus } from '@/store/dataset'
+import { fetchFileInfo, getSelectedFileStatus } from '@/store/file';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
 import { DatasetFile } from '@/types/file';
 
-import '@/components/Explorer.css';
+import '@/components/Explorer.css'
 
 type FileItemProps = {
     refProp: LegacyRef<HTMLDivElement> | undefined
@@ -32,13 +33,18 @@ export default function Explorer() {
     const selectedFileRef = useRef<HTMLDivElement>(null);
     const dispatch = useAppDispatch()
     const dataset = useAppSelector(getDataset)
+    const status = useAppSelector(getDatasetStatus)
+    const fileStatus = useAppSelector(getSelectedFileStatus)
     const selectedIndex = useAppSelector((state: RootState) => state.selectedDataset.selectedFileIndex)
-    const status = useAppSelector((state: RootState) => state.selectedDataset.status)
-    const error = useAppSelector((state: RootState) => state.selectedDataset.error)
 
     const selectFileIndex = (index: number) => {
-        dispatch(updateSelectedFileIndex(index))
+        dispatch(fetchFileInfo(index))
     }
+    useEffect(() => {
+        if (fileStatus.isIdle() && selectedIndex !== null) {
+            selectFileIndex(selectedIndex)
+        }
+    }, [fileStatus, selectedIndex, selectFileIndex])
 
     // Select previous or next file on arrow key
     const handleKeyDown = useCallback(
@@ -63,9 +69,9 @@ export default function Explorer() {
 
     let title
     let content
-    if (status === 'loading') {
+    if (status.isLoading()) {
         content = <p className='status'>Loading...</p>
-    } else if (status === 'succeeded') {
+    } else if (status.isSucceeded()) {
         title = <div className='explorer-title'>
             <h2>{dataset?.name}</h2>
             <span>{dataset?.files.length} elements</span>
@@ -79,8 +85,8 @@ export default function Explorer() {
                 onClick={() => selectFileIndex(index)}
             />
         )))
-    } else if (status === 'failed') {
-        content = <div className='status'>{error}</div>
+    } else if (status.isFailed()) {
+        content = <div className='status'>{status.error}</div>
     }
 
     return (

@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { Dataset } from '@/types/dataset'
-import { CommonStateInterface } from '@/types/interfaces'
+import { CommonStateInterface, CommonStateStatus } from '@/types/interfaces'
 import { RootState } from '@/app/store'
 import { deleteDataset, editDataset } from './dataset'
 
@@ -11,8 +11,7 @@ interface AllDatasetsStateInterface extends CommonStateInterface {
 
 const initialState: AllDatasetsStateInterface = {
     datasets: [],
-    status: 'idle',
-    error: null
+    status: CommonStateStatus.idle
 }
 
 const allDatasetsSlice = createSlice({
@@ -23,15 +22,14 @@ const allDatasetsSlice = createSlice({
         builder
             // get all dataset
             .addCase(fetchDatasets.pending, (state: any) => {
-                state.status = 'loading'
+                state.status = CommonStateStatus.loading
             })
             .addCase(fetchDatasets.fulfilled, (state: any, action: PayloadAction<[]>) => {
-                state.status = 'succeeded'
+                state.status = CommonStateStatus.succeeded
                 state.datasets = action.payload
             })
             .addCase(fetchDatasets.rejected, (state: any, action) => {
-                state.status = 'failed'
-                state.error = action.error.message
+                state.status = CommonStateStatus.failed(action.error.message)
             })
             // add dataset
             .addCase(postDataset.fulfilled, (state: any, action: PayloadAction<[]>) => {
@@ -78,4 +76,5 @@ export const postDataset = createAsyncThunk('datasets/postDataset', async (datas
 export default allDatasetsSlice.reducer
 
 export const getAllDatasets = (state: RootState) => state.datasets.datasets
+export const getAllDatasetsStatus = (state: RootState) => CommonStateStatus.fromInterface(state.datasets.status)
 export const getDatasetById = (state: RootState, id: string) => state.datasets.datasets.find(d => d.id === id);

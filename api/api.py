@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import uuid
 
 from helpers import *
-from dataset_db import *
+import dataset_db as db
 from interrogator_dd import Deepdanbooru
 
 app = Flask(__name__)
@@ -76,9 +76,9 @@ def add_dataset():
         with open(DATASETS_PATH, mode='w') as f:
             json.dump([], f)
 
-    conf_db(path)
+    db.conf_db(path)
     # add deepdanbooru to dataset
-    add_interrogator(path, Deepdanbooru.name, Deepdanbooru.get_tags())
+    db.add_interrogator(path, Deepdanbooru.name, Deepdanbooru.get_tags())
     file = get_datasets_json()
     file.append(new_dataset)
     save_datasets(file)
@@ -88,7 +88,19 @@ def add_dataset():
 
 @app.route('/api/load_file', methods=['GET'])
 def load_file():
-    dataset_id = request.args.get('dataset_id')
+    path = request.args.get('path')
+
+    if not path:
+        return "Path value is required", 400
+
+    if not os.path.isfile(path):
+        return "File does not exists", 404
+
+    return send_file(path)
+
+
+@app.route('/api/datasets/<dataset_id>/file_info', methods=['GET'])
+def get_file_info(dataset_id):
     dataset = get_dataset_by_id(dataset_id)
     if not dataset_id or not dataset:
         return "Dataset is not found", 404
@@ -105,6 +117,4 @@ def load_file():
     # uncomment to run deepdanbooru and save result in db
     # add_file_with_tags(dataset_path, path,
     #                    Deepdanbooru.name, Deepdanbooru.eval_img(path))
-    check_files(dataset_path, dhash(path))
-
-    return send_file(path)
+    return db.get_file_info(dataset_path, dhash(path))

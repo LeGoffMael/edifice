@@ -1,3 +1,4 @@
+import json
 import os
 import sqlite3
 
@@ -48,16 +49,43 @@ def conf_db(dataset_path):
     cur.close()
 
 
-def check_files(dataset_path, hash):
+def get_file_info(dataset_path, hash):
     con = sqlite3.connect(get_db_file(dataset_path))
+    con.row_factory = sqlite3.Row
     cur = con.cursor()
 
-    cur.execute(
-        "SELECT file_tags.value, file_tags.it_tag FROM file INNER JOIN file_tags ON file.hash = file_tags.file_hash WHERE file.hash=?", [hash])
-    print(cur.fetchall())
+    cur.execute('''
+    SELECT
+        interrogator.name as interrogatorName,
+        file_tags.value as value,
+        file_tags.it_tag as tag
+    FROM file INNER JOIN file_tags
+        ON file.hash = file_tags.file_hash
+        INNER JOIN interrogator
+        ON interrogator.id = file_tags.it_id
+    WHERE file.hash=?''', [hash])
+    tags = cur.fetchall()
+
+    cur.execute('''
+    SELECT
+        file.prompt
+    FROM file
+    WHERE file.hash=?''', [hash])
+    # TODO : add smart crop
+    prompt_crop = cur.fetchone()
+    if not prompt_crop:
+        prompt = None
+    else:
+        prompt = prompt_crop[0]
 
     con.commit()
     cur.close()
+
+    return {
+        'hash': hash,
+        'prompt': prompt,
+        'tags': tags is None if [] else json.loads(json.dumps([dict(ix) for ix in tags]))
+    }
 
 
 def add_interrogator(dataset_path, name, tags):

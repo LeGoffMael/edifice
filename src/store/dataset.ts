@@ -1,7 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { Dataset } from '@/types/dataset'
-import { CommonStateInterface } from '@/types/interfaces'
+import { CommonStateInterface, CommonStateStatus } from '@/types/interfaces'
 import { RootState } from '@/app/store'
 
 interface DatasetsStateInterface extends CommonStateInterface {
@@ -12,8 +12,7 @@ interface DatasetsStateInterface extends CommonStateInterface {
 const initialState: DatasetsStateInterface = {
   dataset: null,
   selectedFileIndex: null,
-  status: 'idle',
-  error: null
+  status: CommonStateStatus.idle
 }
 
 const datasetSlice = createSlice({
@@ -29,18 +28,17 @@ const datasetSlice = createSlice({
   extraReducers(builder) {
     builder
       .addCase(fetchDataset.pending, (state: any) => {
-        state.status = 'loading'
+        state.status = CommonStateStatus.loading
       })
       .addCase(fetchDataset.fulfilled, (state: any, action: PayloadAction<[]>) => {
-        state.status = 'succeeded'
+        state.status = CommonStateStatus.succeeded
         state.dataset = action.payload
         if (state.dataset.files.length > 0) {
           state.selectedFileIndex = 0
         }
       })
       .addCase(fetchDataset.rejected, (state: any, action) => {
-        state.status = 'failed'
-        state.error = action.error.message
+        state.status = CommonStateStatus.failed(action.error.message)
       })
       .addCase(editDataset.fulfilled, (state: any, action: PayloadAction<Dataset>) => {
         const editedDataset: Dataset = action.payload
@@ -86,7 +84,4 @@ export const { updateSelectedFileIndex } = datasetSlice.actions
 export default datasetSlice.reducer
 
 export const getDataset = (state: RootState) => state.selectedDataset.dataset
-export const getSelectedFile = (state: RootState) =>
-  state.selectedDataset.selectedFileIndex === null
-    ? null
-    : state.selectedDataset.dataset?.files[state.selectedDataset.selectedFileIndex] ?? null
+export const getDatasetStatus = (state: RootState) => CommonStateStatus.fromInterface(state.selectedDataset.status)
