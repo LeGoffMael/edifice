@@ -26,7 +26,7 @@ def find_dataset_files(dataset: Dataset):
     return files
 
 
-def find_files_with_extensions_recursive(directory, includeExtRegex, excludeDirRegex):
+def find_files_with_extensions_recursive(directory: str, includeExtRegex: str, excludeDirRegex: str):
     """
     Recursively finds all files which validate the regex in a directory.
     """
@@ -47,7 +47,7 @@ def find_files_with_extensions_recursive(directory, includeExtRegex, excludeDirR
     return files
 
 
-def find_files_with_extensions(directory, includeExtRegex):
+def find_files_with_extensions(directory: str, includeExtRegex: str):
     """
     Finds all files which validate the regex in a directory.
     """
@@ -65,7 +65,7 @@ def find_files_with_extensions(directory, includeExtRegex):
     return files
 
 
-def __getFile(directory, filename):
+def __getFile(directory: str, filename: str):
     ext = os.path.splitext(filename)[1]
     return File(os.path.join(directory, filename), filename, ext.lower())
 
@@ -78,28 +78,28 @@ def get_datasets_json():
     return []
 
 
-def get_dataset_index_by_id(dataset_id):
+def get_dataset_index_by_id(dataset_id: str):
     for i, obj in enumerate(get_datasets_json()):
         if obj.get('id') == dataset_id:
             return i
     return -1
 
 
-def get_dataset_by_id(dataset_id):
+def get_dataset_by_id(dataset_id: str):
     for _, obj in enumerate(get_datasets_json()):
         if obj.get('id') == dataset_id:
             return obj
     return None
 
 
-def save_datasets(datasets):
+def save_datasets(datasets: list):
     with open(DATASETS_PATH, mode='w') as f:
         json.dump(datasets, f,
                   indent=4,
                   separators=(',', ': '))
 
 
-def get_file_extension(path):
+def get_file_extension(path: str):
     return pathlib.Path(path).suffix
 
 

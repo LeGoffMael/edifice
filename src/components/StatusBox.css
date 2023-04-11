@@ -1,0 +1,22 @@
+.status-box {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    border: 1px solid white;
+    padding: 15px;
+
+    background-color: #1E1E1E;
+}
+
+.status-box>span {
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.status-box .msg {
+    font-size: 0.7em;
+}

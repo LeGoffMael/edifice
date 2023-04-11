@@ -12,6 +12,9 @@ npm install
 ```
 
 ### Install Flask side
+
+> **_NOTE:_** need to install [redis-server](https://redis.io/docs/getting-started/installation/)
+
 ```
 cd api
 python3 -m venv venv

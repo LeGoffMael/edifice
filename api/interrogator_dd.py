@@ -1,7 +1,10 @@
+from typing import Iterable, Tuple
+from logging import Logger
+import json
+
 import deepdanbooru as dd
-import os
-import re
-from models import Dataset
+from models import Dataset, File
+from dataset_db import add_file_with_tags
 
 
 class Deepdanbooru:
@@ -16,28 +19,23 @@ class Deepdanbooru:
         model = dd.project.load_model_from_project(
             Deepdanbooru.project_path, compile_model=False)
 
-        result_tags = []
-        for tag, score in dd.commands.evaluate_image(
-                path, model, Deepdanbooru.get_tags(), Deepdanbooru.threshold):
-            result_tags.append((tag, score))
-        return result_tags
+        return dd.commands.evaluate_image(
+            path, model, Deepdanbooru.get_tags(), Deepdanbooru.threshold)
 
-    def eval_dataset(dataset: Dataset):
+    def eval_dataset(dataset: Dataset, files: list[File], logger: Logger) -> Iterable[Tuple[str]]:
+        logger.info('eval_dataset loading model and tags')
+
         model = dd.project.load_model_from_project(
             Deepdanbooru.project_path, compile_model=False)
+        tags = Deepdanbooru.get_tags()
 
-        for root, _, filenames in os.walk(dataset.path):
-            # exclude directory if match regex
-            if dataset.excludeDirRegex and re.match(dataset.excludeDirRegex, root):
-                continue
+        for f in files:
+            filepath = f.get('path')
+            logger.info('filepath: %s', filepath)
 
-            for filename in filenames:
-                # include file if respect regex
-                if not dataset.includeExtRegex or re.match(dataset.includeExtRegex, filename):
-                    tag_sets = dd.commands.evaluate_image(
-                        filename, model, Deepdanbooru.get_tags(), Deepdanbooru.threshold)
-                    print(*tag_sets, sep="\n")
-                else:
-                    continue
-
-        return tag_sets
+            evals = dd.commands.evaluate_image(
+                filepath, model, tags, Deepdanbooru.threshold)
+            add_file_with_tags(dataset.path, filepath,
+                               Deepdanbooru.name, evals)
+            logger.info('tags_score: %s', evals)
+            yield filepath

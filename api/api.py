@@ -1,4 +1,5 @@
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, url_for
+from celery import Celery
 import os
 from types import SimpleNamespace
 import uuid
@@ -8,6 +9,11 @@ import dataset_db as db
 from interrogator_dd import Deepdanbooru
 
 app = Flask(__name__)
+app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
+app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
+
+celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
+celery.conf.update(app.config)
 
 
 @app.route('/api/datasets', methods=['GET'])
@@ -114,7 +120,71 @@ def get_file_info(dataset_id):
     if not os.path.isfile(path):
         return "File does not exists", 404
 
-    # uncomment to run deepdanbooru and save result in db
-    # add_file_with_tags(dataset_path, path,
-    #                    Deepdanbooru.name, Deepdanbooru.eval_img(path))
     return db.get_file_info(dataset_path, dhash(path))
+
+
+@app.route('/api/datasets/<dataset_id>/evaluate', methods=['POST'])
+def evaluate_dataset(dataset_id: str):
+    task = evaluate_dataset.apply_async(args=[dataset_id])
+    return {'statusUrl': url_for('taskstatus', task_id=task.id)}, 202
+
+
+@celery.task(bind=True)
+def evaluate_dataset(self, dataset_id):
+    dataset = json.loads(json.dumps(get_dataset_by_id(dataset_id)),
+                         object_hook=lambda d: SimpleNamespace(**d))
+
+    if not dataset or not dataset.path:
+        self.update_state(state='FAILURE',
+                          meta={'current': 0,
+                                'total': 0,
+                                'status': 'error'})
+        return {}
+
+    files = find_dataset_files(dataset)
+    filesCount = len(files)
+    index = 0
+
+    self.update_state(state='PROGRESS',
+                      meta={'current': 0, 'total': filesCount,
+                            'status': 'loading interrogator model'})
+
+    for filepath in Deepdanbooru.eval_dataset(dataset, files, app.logger):
+        index += 1
+        self.update_state(state='PROGRESS',
+                          meta={'current': index, 'total': filesCount,
+                                'status': filepath})
+
+    return {
+        'current': filesCount,
+        'total': filesCount,
+        'status': 'completed',
+    }
+
+
+@app.route('/api/status/<task_id>', methods=['GET'])
+def taskstatus(task_id):
+    # https://blog.miguelgrinberg.com/post/using-celery-with-flask
+    task = evaluate_dataset.AsyncResult(task_id)
+    if task.state == 'PENDING':
+        return {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
+    elif task.state != 'FAILURE':
+        return {
+            'state': task.state,
+            'current': task.info.get('current', 0),
+            'total': task.info.get('total', 1),
+            'status': task.info.get('status', '')
+        }
+    else:
+        # something went wrong in the background job
+        return {
+            'state': task.state,
+            'current': 1,
+            'total': 1,
+            'status': str(task.info),  # this is the exception raised
+        }

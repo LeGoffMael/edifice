@@ -24,7 +24,7 @@
   "scripts": {
     "start": "export NODE_ENV=development && webpack-dev-server --open",
     "build": "webpack",
-    "start-api": "cd api && venv/bin/flask run --no-debugger",
+    "start-api": "cd api && bash run-redis.sh & cd api && venv/bin/celery -A api.celery worker --loglevel=info & cd api && venv/bin/flask run --no-debugger",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

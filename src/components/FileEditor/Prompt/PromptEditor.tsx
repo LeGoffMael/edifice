@@ -10,6 +10,12 @@ type PromptEditorProps = {
 };
 
 export default function PromptEditor(props: PromptEditorProps) {
+    if (props.isLoading) {
+        return (
+            <div className='prompt-editor'><span>File information are loading...</span></div>
+        )
+    }
+
     return (
         <div className='prompt-editor'>
             <PromptInput prompt={props.selectedFile.info?.prompt} />

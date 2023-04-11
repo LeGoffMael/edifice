@@ -1,7 +1,7 @@
 import { KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { datasetsRoute } from '@/index';
-import { getDataset, getDatasetStatus } from '@/store/dataset'
+import { evaluateDataset, getDataset, getDatasetStatus } from '@/store/dataset'
 import { fetchFileInfo, getSelectedFileStatus } from '@/store/file';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
@@ -45,6 +45,12 @@ export default function Explorer() {
             selectFileIndex(selectedIndex)
         }
     }, [fileStatus, selectedIndex, selectFileIndex])
+
+    const clickEvaluateDataset = () => {
+        if (dataset !== null) {
+            dispatch(evaluateDataset(dataset))
+        }
+    }
 
     // Select previous or next file on arrow key
     const handleKeyDown = useCallback(
@@ -92,6 +98,7 @@ export default function Explorer() {
     return (
         <section className='explorer'>
             <Link to={datasetsRoute}>Open dataset list</Link>
+            {dataset !== null && <Link to='#' onClick={clickEvaluateDataset}>Evaluate dataset</Link>}
             {title}
             <div className='explorer-list' ref={ref} tabIndex={-1} onClick={setFocus} onKeyDown={handleKeyDown}>
                 {content}
