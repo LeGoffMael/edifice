@@ -1,5 +1,5 @@
 import { Size } from '@/types/types'
-import { DatasetFile } from '@/types/file';
+import { DatasetFile, DatasetFileCustomTag } from '@/types/file';
 
 export class Dataset {
     id!: string; // id should never be null
@@ -15,6 +15,7 @@ export class Dataset {
     includeExtRegex: string = '^[^.].*\\.(jpeg|jpg|gif|png|webp|avif|svg)$'; // list of authorized file extensions
     excludeDirRegex: string = ''; // list of exclude directories
     idealSize: Size | undefined;
+    customTags: Array<DatasetFileCustomTag> = [];
 
     constructor(initializer?: any) {
         if (!initializer) return;
@@ -29,5 +30,6 @@ export class Dataset {
         if (initializer.includeExtRegex) this.includeExtRegex = initializer.includeExtRegex;
         if (initializer.excludeDirRegex) this.excludeDirRegex = initializer.excludeDirRegex;
         if (initializer.idealSize) this.idealSize = initializer.idealSize;
+        if (initializer.customTags) this.customTags = initializer.customTags;
     }
 }

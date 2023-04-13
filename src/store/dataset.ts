@@ -3,12 +3,27 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { Dataset } from '@/types/dataset'
 import { CommonStateInterface, CommonStateStatus } from '@/types/interfaces'
 import { AppDispatch, RootState } from '@/app/store'
+import { DatasetFileCustomTag, DatasetFileTag } from '@/types/file'
 
 interface DatasetsEvaluateStatus {
   current: number,
   total: number,
   status: string,
 }
+
+export interface DatasetsSaveCustomTags {
+  datasetId: string,
+  add: Array<DatasetFileCustomTag>,
+  edit: Array<DatasetFileCustomTag>,
+  remove: Array<string>,
+}
+
+export interface DatasetsSaveTagMatching {
+  datasetId: string,
+  tag: DatasetFileTag,
+  matchId: string | null,
+}
+
 interface DatasetsStateInterface extends CommonStateInterface {
   dataset: Dataset | null,
   selectedFileIndex: number | null,
@@ -87,6 +102,26 @@ export const editDataset = createAsyncThunk('dataset/editDataset', async (datase
 export const deleteDataset = createAsyncThunk('dataset/deleteDataset', async (id: string) => {
   const response = await fetch(`/api/datasets/${id}`, { method: 'DELETE' });
   return response.text();
+})
+
+export const saveDatasetCustomTags = createAsyncThunk('datasets/saveDatasetCustomTags', async (data: DatasetsSaveCustomTags) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  };
+  const response = await fetch(`/api/datasets/${data.datasetId}/customTags`, requestOptions);
+  return response.json();
+})
+
+export const saveDataseTagMatching = createAsyncThunk('datasets/saveDataseTagMatching', async (data: DatasetsSaveTagMatching) => {
+  const requestOptions = {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  };
+  const response = await fetch(`/api/datasets/${data.datasetId}/tagMatching`, requestOptions);
+  return response.json();
 })
 
 export const evaluateDataset = createAsyncThunk('dataset/evaluateDataset', async (dataset: Dataset, { dispatch }) => {

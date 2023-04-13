@@ -17,9 +17,8 @@ export default function DatasetForm(props: Props) {
     const onDatasetChanged = (val: Partial<Dataset>) => setDataset({ ...dataset, ...val })
 
     return (
-        <Modal>
+        <Modal titleString={props.title}>
             <section className='dataset-form'>
-                <h2>{props.title}</h2>
                 <form>
                     <label htmlFor="datasetName">Dataset Name:</label>
                     <input

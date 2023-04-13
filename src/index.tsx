@@ -4,18 +4,23 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux'
 
 import { store } from '@/app/store'
+import { datasetLoader } from '@/app/loaders';
 import reportWebVitals from '@/reportWebVitals';
 
 import App from '@/App';
 import DatasetList from '@/features/datasets/DatasetList';
 import AddDatasetForm from '@/features/datasets/AddDatasetForm';
-import EditDatasetForm, { datasetLoader } from '@/features/datasets/EditDatasetForm';
+import EditDatasetForm from '@/features/datasets/EditDatasetForm';
+import CustomTagsForm from '@/features/customTags/CustomTagsForm';
 
 import '@/index.css';
+import InterrogatorMatcherTable from './features/customTags/InterrogatorMatcherTable';
 
 export const datasetsRoute = '/datasets/select';
 export const addDatasetRoute = '/datasets/add';
 export const editDatasetRoute = '/datasets/edit/';
+export const datasetCustomTagsRoute = '/datasets/custom-tags/';
+export const datasetTagsMatcherRoute = '/datasets/tags-matcher/';
 
 export const router = createBrowserRouter([
   {
@@ -33,6 +38,16 @@ export const router = createBrowserRouter([
       {
         path: editDatasetRoute + ':datasetId',
         element: <EditDatasetForm />,
+        loader: (params) => datasetLoader(params, store.getState())
+      },
+      {
+        path: datasetCustomTagsRoute + ':datasetId',
+        element: <CustomTagsForm />,
+        loader: (params) => datasetLoader(params, store.getState())
+      },
+      {
+        path: datasetTagsMatcherRoute + ':datasetId',
+        element: <InterrogatorMatcherTable />,
         loader: (params) => datasetLoader(params, store.getState())
       },
     ]

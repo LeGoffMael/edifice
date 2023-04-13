@@ -31,11 +31,28 @@ export class DatasetFileTag {
     interrogatorName: string = '';
     tag: string = '';
     value: number = 0.0;
+    customTagMatcher: DatasetFileCustomTag | undefined;
 
     constructor(initializer?: any) {
         if (!initializer) return;
         if (initializer.interrogatorName) this.interrogatorName = initializer.interrogatorName;
         if (initializer.tag) this.tag = initializer.tag;
         if (initializer.value) this.value = initializer.value;
+        if (initializer.customTagMatcher) this.customTagMatcher = initializer.customTagMatcher;
+    }
+}
+
+export class DatasetFileCustomTag {
+    id: string = '';
+    name: string = '';
+    description: string | undefined;
+    parentId: string | undefined;
+    childrens: Array<DatasetFileCustomTag> = [];
+
+    constructor(initializer?: any) {
+        if (!initializer) return;
+        if (initializer.name) this.name = initializer.name;
+        if (initializer.description) this.description = initializer.description;
+        if (initializer.childrens) this.childrens = initializer.childrens;
     }
 }

@@ -188,3 +188,48 @@ def taskstatus(task_id):
             'total': 1,
             'status': str(task.info),  # this is the exception raised
         }
+
+
+@app.route('/api/datasets/<dataset_id>/customTags', methods=['GET', 'POST'])
+def dataset_custom_tags(dataset_id):
+    dataset = get_dataset_by_id(dataset_id)
+    if not dataset_id or not dataset:
+        return "Dataset is not found", 404
+
+    if request.method == 'GET':
+        """return the dataset's custom tags"""
+        return db.get_custom_tags(dataset.get('path'))
+
+    if request.method == 'POST':
+        """change the dataset's custom tags"""
+
+        newTags = request.json.get('add')
+        editTags = request.json.get('edit')
+        removeTags = request.json.get('remove')
+
+        db.save_custom_tags(dataset.get('path'), newTags, editTags, removeTags)
+        return {}, 200
+
+    return "Request not supported", 405
+
+
+@app.route('/api/datasets/<dataset_id>/tagMatching', methods=['POST'])
+def dataset_tags_matching(dataset_id):
+    dataset = get_dataset_by_id(dataset_id)
+    if not dataset_id or not dataset:
+        return "Dataset is not found", 404
+
+    tag = request.json.get('tag')
+    match_id = request.json.get('matchId')
+
+    db.save_tag_matching(dataset.get('path'), tag, match_id)
+    return {}, 200
+
+
+@app.route('/api/datasets/<dataset_id>/tags', methods=['GET'])
+def get_dataset_tags(dataset_id):
+    dataset = get_dataset_by_id(dataset_id)
+    if not dataset_id or not dataset:
+        return "Dataset is not found", 404
+
+    return db.get_tags(dataset.get('path'))

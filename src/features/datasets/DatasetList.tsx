@@ -6,7 +6,7 @@ import { deleteDataset, fetchDataset, getDataset } from '@/store/dataset';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { Dataset } from '@/types/dataset';
 import Modal from '@/components/Modal';
-import { addDatasetRoute, editDatasetRoute } from '@/index';
+import { addDatasetRoute, datasetCustomTagsRoute, editDatasetRoute } from '@/index';
 
 import '@/features/datasets/DatasetList.css';
 
@@ -41,6 +41,7 @@ function DatasetItem(props: DatasetItemProps) {
                 </div>
                 {/* prevent to call `onClick` on click edit */}
                 <Link to={editDatasetRoute + props.dataset.id} onClick={(e) => e.stopPropagation()}>Edit</Link>
+                <Link to={datasetCustomTagsRoute + props.dataset.id} onClick={(e) => e.stopPropagation()}>Manage custom tags</Link>
                 <Link to='#' onClick={(e) => { e.stopPropagation(); clickDeleteDataset(); }}>Delete</Link>
             </div>
         </div >
@@ -73,15 +74,16 @@ export default function DatasetList() {
         content = <div className='status'>{status.error}</div>
     }
 
+    const title = <div>
+        <div>
+            <h2>Datasets</h2>
+            <span>{datasets.length} elements</span>
+        </div>
+        <Link to={addDatasetRoute}>Add Dataset</Link>
+    </div>
+
     return (
-        <Modal canPop={selectedDataset !== null}>
-            <div className='datasets-title'>
-                <div>
-                    <h2>Datasets</h2>
-                    <span>{datasets.length} elements</span>
-                </div>
-                <Link to={addDatasetRoute}>Add Dataset</Link>
-            </div>
+        <Modal canPop={selectedDataset !== null} title={title}>
             <div className='datasets-list'>
                 {content}
             </div>
