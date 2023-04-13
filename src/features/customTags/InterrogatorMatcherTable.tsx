@@ -1,7 +1,8 @@
-import { CSSProperties, ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 import Modal from '@/components/Modal';
 import { useLoaderData } from 'react-router-dom';
 import { FixedSizeList as List } from 'react-window';
+import AutoSizer from 'react-virtualized-auto-sizer';
 import { DatasetFileCustomTag, DatasetFileTag } from '@/types/file';
 import { Dataset } from '@/types/dataset';
 import { useAppDispatch } from '@/app/hooks';
@@ -53,29 +54,33 @@ export default function InterrogatorMatcherTable() {
 
     return (
         <Modal titleString={`<${dataset.name}> interrogator tags`}>
-            <section className='interrogator-tags-matcher-form'>
+            <section className='interrogator-tags-matcher-form' style={isLoading ? {} : { height: 'calc(100vh - 115px)' }}>
                 {isLoading
                     ? <span>Loading...</span>
                     :
-                    <List
-                        height={500}
-                        itemCount={interrogatorTags.length}
-                        itemSize={35}
-                        width={800}
-                    >
-                        {({ index, style }: { index: number; style: CSSProperties; }) => (
-                            <div style={style}>
-                                <InterrogatorMatcherItem
-                                    key={index}
-                                    index={index}
-                                    interrogatorTag={interrogatorTags[index]}
-                                    selectInputOptions={selectButtonOptions}
-                                    onClear={onClear}
-                                    onChange={onChangeTagMatch}
-                                />
-                            </div>
+                    <AutoSizer>
+                        {({ height, width }) => (
+                            <List
+                                height={height ?? 100}
+                                width={width ?? 100}
+                                itemCount={interrogatorTags.length}
+                                itemSize={35}
+                            >
+                                {({ index, style }: { index: number; style: CSSProperties; }) => (
+                                    <div style={style}>
+                                        <InterrogatorMatcherItem
+                                            key={index}
+                                            index={index}
+                                            interrogatorTag={interrogatorTags[index]}
+                                            selectInputOptions={selectButtonOptions}
+                                            onClear={onClear}
+                                            onChange={onChangeTagMatch}
+                                        />
+                                    </div>
+                                )}
+                            </List>
                         )}
-                    </List>
+                    </AutoSizer>
                 }
             </section>
         </Modal >

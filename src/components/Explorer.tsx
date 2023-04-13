@@ -1,4 +1,4 @@
-import { KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useEffect, useRef } from 'react';
+import { CSSProperties, KeyboardEvent, LegacyRef, MouseEventHandler, useCallback, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { datasetsRoute } from '@/index';
 import { evaluateDataset, getDataset, getDatasetStatus } from '@/store/dataset'
@@ -6,6 +6,8 @@ import { fetchFileInfo, getSelectedFileStatus } from '@/store/file';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { RootState } from '@/app/store';
 import { DatasetFile } from '@/types/file';
+import AutoSizer from 'react-virtualized-auto-sizer';
+import { FixedSizeList as List } from 'react-window';
 
 import '@/components/Explorer.css'
 
@@ -82,15 +84,28 @@ export default function Explorer() {
             <h2>{dataset?.name}</h2>
             <span>{dataset?.files.length} elements</span>
         </div>
-        content = dataset?.files.map(((item, index) => (
-            <FileItem
-                refProp={index === selectedIndex ? selectedFileRef : null}
-                key={item.path}
-                file={item}
-                isSelected={index === selectedIndex}
-                onClick={() => selectFileIndex(index)}
-            />
-        )))
+        content = (<AutoSizer>
+            {({ height, width }) => (
+                <List
+                    height={height ?? 100}
+                    width={width ?? 100}
+                    itemCount={dataset?.files.length ?? 0}
+                    itemSize={20}
+                >
+                    {({ index, style }: { index: number; style: CSSProperties; }) => (
+                        <div style={style}>
+                            <FileItem
+                                refProp={index === selectedIndex ? selectedFileRef : null}
+                                key={dataset?.files[index].path}
+                                file={dataset!.files[index]}
+                                isSelected={index === selectedIndex}
+                                onClick={() => selectFileIndex(index)}
+                            />
+                        </div>
+                    )}
+                </List>
+            )}
+        </AutoSizer>)
     } else if (status.isFailed()) {
         content = <div className='status'>{status.error}</div>
     }
