@@ -4,6 +4,7 @@ import re
 from typing import Tuple
 from pathlib import Path
 import time
+import math
 from PIL import Image
 
 from models import File, Dataset
@@ -153,15 +154,37 @@ def is_gif(file_path: str) -> bool:
     return get_file_extension(file_path) == '.gif'
 
 
-def gif_to_jpeg(gif_file_path: str) -> Tuple:
+def gif_to_2_jpegs(tmpdir: str, gif_file_path: str) -> Tuple:
     """
-    Convert gif into jpeg
+    Convert 2 frames from gif into jpeg
     """
 
     # convert the GIF to a JPEG image
-    gif_image = Image.open(gif_file_path)
-    jpeg_image = gif_image.convert('RGB')
-    jpeg_file_name = get_file_name(
-        gif_file_path) + '_' + str(int(time.time())) + '.jpg'
+    ts = str(int(time.time()))
 
-    return jpeg_image, jpeg_file_name
+    with Image.open(gif_file_path) as im:
+        jpeg_file_name_1 = get_file_name(
+            gif_file_path) + '_1_' + ts + '.jpg'
+        jpeg_file_name_2 = get_file_name(
+            gif_file_path) + '_2_' + ts + '.jpg'
+
+        jpeg_file_path_1 = os.path.join(tmpdir, jpeg_file_name_1)
+        jpeg_file_path_2 = os.path.join(tmpdir, jpeg_file_name_2)
+
+        frame_1 = math.floor(im.n_frames * (1/3))
+        frame_2 = math.floor(im.n_frames * (2/3))
+
+        im_1 = im.copy()
+        if im_1.mode in ("RGBA", "P"):
+            im_1 = im_1.convert("RGB")
+        im_2 = im.copy()
+        if im_2.mode in ("RGBA", "P"):
+            im_2 = im_2.convert("RGB")
+
+        im.seek(frame_1)
+        im_1.save(jpeg_file_path_1)
+
+        im.seek(frame_2)
+        im_2.save(jpeg_file_path_2)
+
+        return jpeg_file_path_1, jpeg_file_path_2

@@ -2,11 +2,12 @@ from typing import Iterable, Tuple
 from logging import Logger
 import os
 import tempfile
+from itertools import chain
 
 import deepdanbooru as dd
 from models import Dataset, File
 from dataset_db import add_file_with_tags
-from helpers import is_gif, gif_to_jpeg
+from helpers import is_gif, gif_to_2_jpegs
 
 
 class Deepdanbooru:
@@ -39,14 +40,17 @@ class Deepdanbooru:
         logger.info('filepath: %s', filepath)
 
         if is_gif(filepath) is True:
-            jpeg_image, jpeg_file_name = gif_to_jpeg(filepath)
             # create a temporary directory to store the JPEG file
             with tempfile.TemporaryDirectory() as tmpdir:
-                jpeg_file_path = os.path.join(tmpdir, jpeg_file_name)
-                jpeg_image.save(jpeg_file_path)
+                jpeg_file_path_1, jpeg_file_path_2 = gif_to_2_jpegs(
+                    tmpdir, filepath)
 
-                evals = dd.commands.evaluate_image(
-                    jpeg_file_path, model, tags, Deepdanbooru.threshold)
+                evals_1 = dd.commands.evaluate_image(
+                    jpeg_file_path_1, model, tags, Deepdanbooru.threshold)
+                evals_2 = dd.commands.evaluate_image(
+                    jpeg_file_path_2, model, tags, Deepdanbooru.threshold)
+                evals = chain(evals_1, evals_2)
+
                 add_file_with_tags(dataset.path, filepath,
                                    Deepdanbooru.name, evals)
         else:
