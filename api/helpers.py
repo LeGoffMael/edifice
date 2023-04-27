@@ -1,7 +1,9 @@
 import os
 import json
 import re
-import pathlib
+from typing import Tuple
+from pathlib import Path
+import time
 from PIL import Image
 
 from models import File, Dataset
@@ -99,8 +101,16 @@ def save_datasets(datasets: list):
                   separators=(',', ': '))
 
 
-def get_file_extension(path: str):
-    return pathlib.Path(path).suffix
+def get_file_extension(path: str) -> str:
+    return Path(path).suffix.lower()
+
+
+def get_file_name(path: str):
+    """
+    Returns file name without extension
+    """
+
+    return Path(path).stem
 
 
 def dhash(image_path, hash_size=8):
@@ -137,3 +147,21 @@ def dhash(image_path, hash_size=8):
             decimal_value = 0
 
     return ''.join(hex_string)
+
+
+def is_gif(file_path: str) -> bool:
+    return get_file_extension(file_path) == '.gif'
+
+
+def gif_to_jpeg(gif_file_path: str) -> Tuple:
+    """
+    Convert gif into jpeg
+    """
+
+    # convert the GIF to a JPEG image
+    gif_image = Image.open(gif_file_path)
+    jpeg_image = gif_image.convert('RGB')
+    jpeg_file_name = get_file_name(
+        gif_file_path) + '_' + str(int(time.time())) + '.jpg'
+
+    return jpeg_image, jpeg_file_name
