@@ -19,7 +19,7 @@ export default function PromptEditor(props: PromptEditorProps) {
     return (
         <div className='prompt-editor'>
             <PromptInput prompt={props.selectedFile.info?.prompt} />
-            <div>
+            <div className='tags'>
                 <Tabs>
                     <TabPane title="Interrogators">
                         <ul>
@@ -29,7 +29,11 @@ export default function PromptEditor(props: PromptEditorProps) {
                         </ul>
                     </TabPane>
                     <TabPane title="My tags">
-                        <div>My tags</div>
+                        <ul>
+                            {props.selectedFile.info?.customTags.map(((t, _) => (
+                                <li key={t.id}>{t.name}</li>
+                            )))}
+                        </ul>
                     </TabPane>
                 </Tabs>
             </div>

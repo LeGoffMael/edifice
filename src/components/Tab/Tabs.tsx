@@ -16,7 +16,7 @@ export default function Tabs(props: Props) {
 
     return (
         <div className='tabs'>
-            <ul>
+            <ul className='tabs-titles'>
                 {children.map((item, index) => (
                     <TabTitle
                         key={item.props.title}

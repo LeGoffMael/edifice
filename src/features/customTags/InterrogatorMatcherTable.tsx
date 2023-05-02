@@ -6,7 +6,7 @@ import AutoSizer from 'react-virtualized-auto-sizer';
 import { DatasetFileCustomTag, DatasetFileTag } from '@/types/file';
 import { Dataset } from '@/types/dataset';
 import { useAppDispatch } from '@/app/hooks';
-import { saveDataseTagMatching } from '@/store/dataset';
+import { saveDatasetTagMatching, clearDatasetTagMatching } from '@/store/dataset';
 
 export default function InterrogatorMatcherTable() {
     const dispatch = useAppDispatch()
@@ -24,16 +24,16 @@ export default function InterrogatorMatcherTable() {
     }, []);
 
     const onClearTagMatching = (tag: DatasetFileTag) => {
-        dispatch(saveDataseTagMatching({
+        dispatch(clearDatasetTagMatching({
             datasetId: dataset.id,
             tag: tag,
-            matchId: null,
         }));
     }
-    const onChangeTagMatch = (tag: DatasetFileTag, matchId: string) => {
-        dispatch(saveDataseTagMatching({
+    const onChangeTagMatch = (tag: DatasetFileTag, matchPos: number, matchId: string) => {
+        dispatch(saveDatasetTagMatching({
             datasetId: dataset.id,
             tag: tag,
+            matchPos: matchPos,
             matchId: matchId,
         }));
     }
@@ -46,7 +46,9 @@ export default function InterrogatorMatcherTable() {
         if (interrogatorTags === undefined) return;
         const newList = [...interrogatorTags]
         const newInterrogatorTag = newList[index]
-        newInterrogatorTag.customTagMatcher = undefined
+        newInterrogatorTag.customTagMatcher1 = undefined
+        newInterrogatorTag.customTagMatcher2 = undefined
+        newInterrogatorTag.customTagMatcher3 = undefined
         newList[index] = newInterrogatorTag
         setInterrogatorTags(newList)
         onClearTagMatching(newInterrogatorTag)
@@ -92,7 +94,7 @@ type InterrogatorMatcherItemProps = {
     interrogatorTag: DatasetFileTag;
     selectInputOptions: JSX.Element[] | undefined;
     onClear(index: number): void;
-    onChange(tag: DatasetFileTag, match: string): void;
+    onChange(tag: DatasetFileTag, matchPos: number, match: string): void;
 };
 
 
@@ -115,7 +117,15 @@ function InterrogatorMatcherItem(props: InterrogatorMatcherItemProps) {
                 value={props.interrogatorTag.tag}
                 readOnly
             />
-            <select value={props.interrogatorTag.customTagMatcher?.id} onChange={(e) => props.onChange(props.interrogatorTag, e.target.value)}>
+            <select value={props.interrogatorTag.customTagMatcher1?.id} onChange={(e) => props.onChange(props.interrogatorTag, 1, e.target.value)}>
+                <option key={`select-option-empty`}></option>
+                {props.selectInputOptions}
+            </select>
+            <select value={props.interrogatorTag.customTagMatcher2?.id} onChange={(e) => props.onChange(props.interrogatorTag, 2, e.target.value)}>
+                <option key={`select-option-empty`}></option>
+                {props.selectInputOptions}
+            </select>
+            <select value={props.interrogatorTag.customTagMatcher3?.id} onChange={(e) => props.onChange(props.interrogatorTag, 3, e.target.value)}>
                 <option key={`select-option-empty`}></option>
                 {props.selectInputOptions}
             </select>

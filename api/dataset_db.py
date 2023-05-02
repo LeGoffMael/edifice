@@ -43,8 +43,14 @@ def conf_db(dataset_path):
     cur.execute('''CREATE TABLE interrogator_tags(
         tag TEXT NOT NULL,
         it_id INTEGER NOT NULL,
-        ct_id TEXT,
-        FOREIGN KEY (ct_id)
+        ct_id1 TEXT,
+        ct_id2 TEXT,
+        ct_id3 TEXT,
+        FOREIGN KEY (ct_id1)
+            REFERENCES custom_tags (id)
+        FOREIGN KEY (ct_id2)
+            REFERENCES custom_tags (id)
+        FOREIGN KEY (ct_id3)
             REFERENCES custom_tags (id)
         PRIMARY KEY (tag, it_id)
         FOREIGN KEY (it_id)
@@ -93,6 +99,19 @@ def get_file_info(dataset_path, hash):
     tags = cur.fetchall()
 
     cur.execute('''
+    SELECT DISTINCT
+        custom_tags.id as id,
+        custom_tags.name as name
+    FROM file INNER JOIN file_tags
+        ON file.hash = file_tags.file_hash
+        INNER JOIN interrogator_tags
+        ON interrogator_tags.it_id = file_tags.it_id AND interrogator_tags.tag = file_tags.it_tag
+        INNER JOIN custom_tags
+        ON custom_tags.id = interrogator_tags.ct_id1 OR custom_tags.id = interrogator_tags.ct_id2 OR custom_tags.id = interrogator_tags.ct_id3
+    WHERE file.hash=?''', [hash])
+    custom_tags = cur.fetchall()
+
+    cur.execute('''
     SELECT
         file.prompt
     FROM file
@@ -109,7 +128,8 @@ def get_file_info(dataset_path, hash):
     return {
         'hash': hash,
         'prompt': prompt,
-        'tags': tags is None if [] else json.loads(json.dumps([dict(ix) for ix in tags]))
+        'tags': tags is None if [] else json.loads(json.dumps([dict(ix) for ix in tags])),
+        'customTags': custom_tags is None if [] else json.loads(json.dumps([dict(ix) for ix in custom_tags]))
     }
 
 
@@ -217,7 +237,7 @@ def save_custom_tags(dataset_path: str, add: list, edit: list, remove: list[str]
     cur.close()
 
 
-def save_tag_matching(dataset_path: str, tag: list, match_id: str):
+def save_tag_matching(dataset_path: str, tag: list, match_pos: int, match_id: str):
     con = sqlite3.connect(get_db_file(dataset_path))
     cur = con.cursor()
 
@@ -225,10 +245,32 @@ def save_tag_matching(dataset_path: str, tag: list, match_id: str):
                 [tag.get('interrogatorName')])
     interrogator_id = str(cur.fetchone()[0])
 
-    cur.execute(
-        "UPDATE interrogator_tags SET ct_id=? WHERE tag=? AND it_id=?", (match_id, tag.get('tag'), interrogator_id,))
-    con.commit()
+    if match_pos == '3':
+        cur.execute(
+            "UPDATE interrogator_tags SET ct_id3=? WHERE tag=? AND it_id=?", (match_id, tag.get('tag'), interrogator_id,))
+    elif match_pos == '2':
+        cur.execute(
+            "UPDATE interrogator_tags SET ct_id2=? WHERE tag=? AND it_id=?", (match_id, tag.get('tag'), interrogator_id,))
+    else:
+        cur.execute(
+            "UPDATE interrogator_tags SET ct_id1=? WHERE tag=? AND it_id=?", (match_id, tag.get('tag'), interrogator_id,))
 
+    con.commit()
+    cur.close()
+
+
+def clear_tag_matching(dataset_path: str, tag: list):
+    con = sqlite3.connect(get_db_file(dataset_path))
+    cur = con.cursor()
+
+    cur.execute("SELECT id FROM interrogator WHERE name = ?",
+                [tag.get('interrogatorName')])
+    interrogator_id = str(cur.fetchone()[0])
+
+    cur.execute("UPDATE interrogator_tags SET ct_id1=NULL,ct_id2=NULL,ct_id3=NULL WHERE tag=? AND it_id=?",
+                (tag.get('tag'), interrogator_id,))
+
+    con.commit()
     cur.close()
 
 
@@ -240,22 +282,36 @@ def get_tags(dataset_path: str):
     SELECT
         it.tag as tag,
         i.name as interrogator,
-        ct.id as customTagId,
-        ct.name as customTagName
-    FROM interrogator_tags as it 
-    INNER JOIN interrogator as i ON it.it_id=i.id
-    LEFT JOIN custom_tags as ct ON it.ct_id=ct.id
+        ct1.id as customTagId1,
+        ct1.name as customTagName1,
+        ct2.id as customTagId2,
+        ct2.name as customTagName2,
+        ct3.id as customTagId3,
+        ct3.name as customTagName3
+    FROM interrogator_tags as it
+    LEFT JOIN interrogator as i ON it.it_id=i.id
+    LEFT JOIN custom_tags as ct1 ON it.ct_id1=ct1.id
+    LEFT JOIN custom_tags as ct2 ON it.ct_id2=ct2.id
+    LEFT JOIN custom_tags as ct3 ON it.ct_id3=ct3.id
     ''')
     interrogatorTags = []
     for row in cur.fetchall():
-        tag, interrogatorName, ct_id, ct_name = row
-        custom_tag_matcher = None
-        if ct_id is not None and ct_name is not None:
-            custom_tag_matcher = {"id": ct_id, "name": ct_name}
+        tag, interrogatorName, ct_id_1, ct_name_1, ct_id_2, ct_name_2, ct_id_3, ct_name_3 = row
+        custom_tag_matcher_1 = None
+        if ct_id_1 is not None and ct_name_1 is not None:
+            custom_tag_matcher_1 = {"id": ct_id_1, "name": ct_name_1}
+        custom_tag_matcher_2 = None
+        if ct_id_2 is not None and ct_name_2 is not None:
+            custom_tag_matcher_2 = {"id": ct_id_2, "name": ct_name_2}
+        custom_tag_matcher_3 = None
+        if ct_id_3 is not None and ct_name_3 is not None:
+            custom_tag_matcher_3 = {"id": ct_id_3, "name": ct_name_3}
         result = {
             "interrogatorName": interrogatorName,
             "tag": tag,
-            "customTagMatcher": custom_tag_matcher
+            "customTagMatcher1": custom_tag_matcher_1,
+            "customTagMatcher2": custom_tag_matcher_2,
+            "customTagMatcher3": custom_tag_matcher_3
         }
         interrogatorTags.append(result)
 

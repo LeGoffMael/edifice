@@ -57,8 +57,10 @@ def api_get_dataset_by_id(dataset_id):
         """delete the dataset for <dataset_id>"""
 
         file = get_datasets_json()
+        conf_path = os.path.join(file[index]['path'], db.EDIFICE_DB)
         file.pop(index)
         save_datasets(file)
+        os.remove(conf_path)
 
         return dataset_id
 
@@ -213,8 +215,8 @@ def dataset_custom_tags(dataset_id):
     return "Request not supported", 405
 
 
-@app.route('/api/datasets/<dataset_id>/tagMatching', methods=['POST'])
-def dataset_tags_matching(dataset_id):
+@app.route('/api/datasets/<dataset_id>/tagMatching/<match_pos>', methods=['POST'])
+def dataset_tags_matching(dataset_id, match_pos: int):
     dataset = get_dataset_by_id(dataset_id)
     if not dataset_id or not dataset:
         return "Dataset is not found", 404
@@ -222,7 +224,19 @@ def dataset_tags_matching(dataset_id):
     tag = request.json.get('tag')
     match_id = request.json.get('matchId')
 
-    db.save_tag_matching(dataset.get('path'), tag, match_id)
+    db.save_tag_matching(dataset.get('path'), tag, match_pos, match_id)
+    return {}, 200
+
+
+@app.route('/api/datasets/<dataset_id>/tagMatching', methods=['DELETE'])
+def clear_dataset_tags_matching(dataset_id):
+    dataset = get_dataset_by_id(dataset_id)
+    if not dataset_id or not dataset:
+        return "Dataset is not found", 404
+
+    tag = request.json.get('tag')
+
+    db.clear_tag_matching(dataset.get('path'), tag)
     return {}, 200
 
 

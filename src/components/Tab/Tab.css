@@ -1,16 +1,20 @@
 .tabs {
-    padding: 10px;
+    box-sizing: border-box;
 }
 
-.tabs ul {
-    list-style: none;
-    display: flex;
-    justify-content: left;
-    margin-top: 0;
-    padding: 0;
+.tabs-titles {
+    background-color: #1E1E1E;
+    padding: 18px 0px !important;
+    top: 0px;
+    margin: 0;
+    position: sticky;
+    list-style: none !important;
+    display: flex !important;
+    flex-direction: row !important;
 }
 
 .tab-title button {
+    display: flex;
     border: none;
     background: none;
     color: #fff;

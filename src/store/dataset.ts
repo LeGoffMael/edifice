@@ -21,6 +21,7 @@ export interface DatasetsSaveCustomTags {
 export interface DatasetsSaveTagMatching {
   datasetId: string,
   tag: DatasetFileTag,
+  matchPos: number | null,
   matchId: string | null,
 }
 
@@ -114,9 +115,19 @@ export const saveDatasetCustomTags = createAsyncThunk('datasets/saveDatasetCusto
   return response.json();
 })
 
-export const saveDataseTagMatching = createAsyncThunk('datasets/saveDataseTagMatching', async (data: DatasetsSaveTagMatching) => {
+export const saveDatasetTagMatching = createAsyncThunk('datasets/saveDataseTagMatching', async (data: DatasetsSaveTagMatching) => {
   const requestOptions = {
     method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data)
+  };
+  const response = await fetch(`/api/datasets/${data.datasetId}/tagMatching/${data.matchPos}`, requestOptions);
+  return response.json();
+})
+
+export const clearDatasetTagMatching = createAsyncThunk('datasets/clearDataseTagMatching', async (data: Omit<DatasetsSaveTagMatching, 'matchPos' | 'matchId'>) => {
+  const requestOptions = {
+    method: 'DELETE',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data)
   };
